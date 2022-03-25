@@ -1,0 +1,39 @@
+---
+title: "Final ProjectReport"
+author: "Alex Baburnic, ... , & ..."
+date: "4/21/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+Enter here a brief intro into the topic, using something "catchy" as an attention-getter. 
+
+#### Importance of Studying Weather Station Reliability
+In addition to the intro, make sure to explain why answer the question to this topic is important.This is currently set up as a sub-header to the intro, but the above header line can be deleted to make this all one part of the intro.
+
+#### Report Structure
+List out the main topics and sections of the report to the reader, then transition to the next section. Remember, the professor wants these reports to "flow" together like a story.
+
+## Methodology
+
+Explain here how the data is collected.
+
+## Data Collection
+
+Display here the results of the gathered data.
+
+#### Data Observations
+This is an optional subsection, but it may make the document flow better. Here make some very general observations regarding the data, such as very obvious trends or outliers that may or may not be taken into consideration (and explain why).
+
+## Data Analysis
+
+Make meaningful analysis of the data with respect to the question of the topic. Unlike the previous subsection, go much more into detail here. Explain what certain data trends and values relate to the question and possibly make inferences that could be understood outside of statistics (you can think of the starting paragraph discussion on the Assignment 3 Canvas page).
+
+## Conclusion
+
+Summarize thoughts from analysis, as well as the data collection process, to answer the questions of the topic.
