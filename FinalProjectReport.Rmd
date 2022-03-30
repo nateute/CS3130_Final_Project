@@ -16,13 +16,13 @@ Anyone who has sat through a rainy picnic knows by hard experience that the reli
 #### Importance of Studying Weather Station Reliability
 Reliable weather forecasts would bring greater certainty to the conditions from events as small as the family picnic to as large as community firework shows or rocket launches. Although gathering data about the reliability of the forecast will not inherently improve its reliability, this information can help people make decisions about where to live. Knowing the comparative reliability of the forecast for various cities can help organizations plan large national events and assess the risk of unpredictability. Data comparing local forecasts to national forecasts will help people determine which forecast to trust more when they seem to be disparate. In a broader sense, some believe that modern extreme weather patterns are a direct result of climate change, and therefore climate change damages weather predictability. Based on these topics of value, the following questions can be operationalized:
 
-1) In Salt Lake City, is the 7th day of the local KSL weather forecast more or less accurate than the 7th day of the forecast provided by the U. S. National Weather Service on www.weather.com?
+1) In Salt Lake City, is the 7th day of the local KSL weather forecast more or less accurate than the 7th day of the forecast provided by the U. S. National Weather Service?
 
 2) Of the cities Salt Lake City, UT; Austin, TX; San Francisco, CA; New York, NY; and Chicago, IL; which city's 10th forecast day is, on average, closest to the actual temperature that day?
 
-3) Does the "most accurate" city according to question 2 also have the least deviant temperature day-to-day, ergo is it intuitively easier to predict?
+3) Does the city with the "most accurate" forecast according to question 2 also have the least variability in temperature over the given time period?
 
-4) Do the "less accurate" cities according to question 2 also exhibit the greatest change in average temperature or temperature variance since 80 years ago?
+4) Do the cities with the "less accurate" forecast according to question 2 also exhibit the greatest change in average temperature or temperature variance since 80 years ago?
 
 *the above header line can be deleted to make this all one part of the intro.*
 
@@ -36,6 +36,13 @@ Explain here how the data is collected. Actually operationalize the stuff that I
 ## Data Collection
 
 Display here the results of the gathered data.
+
+Limitations:
+- Forecast data was collected systematically, sampled infrequently
+- Forecast sample size is relatively large, but not enough to overcome skewness
+- We don't know which stations weather.com uses
+- 
+
 
 #### Data Observations
 This is an optional subsection, but it may make the document flow better. Here make some very general observations regarding the data, such as very obvious trends or outliers that may or may not be taken into consideration (and explain why).
