@@ -25,13 +25,13 @@ Reliable weather forecasts would bring greater certainty to the conditions from 
 4) Do the cities with the "less accurate" forecast according to question 2 also exhibit the greatest change in average temperature or temperature variance since 80 years ago?
 
 *the above header line can be deleted to make this all one part of the intro.*
+*List out the main topics and sections of the report to the reader, then transition to the next section. Remember, the professor wants these reports to "flow" together like a story.*
 
-#### Report Structure
-List out the main topics and sections of the report to the reader, then transition to the next section. Remember, the professor wants these reports to "flow" together like a story.
+#### Methodology
 
-## Methodology
+To gather data that answers our question, we will use a variety of sources. Data for national forecasts will be gathered from The Weather Channel. Local Salt Lake City forecasts will be gathered from KSL Weather. Historical true high and low temperatures will be gathered from NOAA, where the stations gathering measurements will be located at the metropolis centers where the forecast is being calculated. Historic data will be gathered at only one station in each city.
 
-Explain here how the data is collected. Actually operationalize the stuff that I said we could operationalize above lol...
+The forecast sources do not seem to disclose how often they update their forecasts, so we had to devise a good way to collect a large sample of forecast predictions for each day. We considered collecting a random sample, but it is a little unrealistic to manually record the forecast at random times during the day.
 
 ## Data Collection
 
@@ -42,7 +42,6 @@ Limitations:
 - Forecast sample size is relatively large, but not enough to overcome skewness
 - We don't know which stations weather.com uses
 - 
-
 
 #### Data Observations
 This is an optional subsection, but it may make the document flow better. Here make some very general observations regarding the data, such as very obvious trends or outliers that may or may not be taken into consideration (and explain why).
