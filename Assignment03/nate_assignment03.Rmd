@@ -1,0 +1,291 @@
+---
+title: "Analysis of Historic Climate Data in Utah"
+author: "Nate Hansen"
+date: "3/28/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+get_yearly_means <- function(temp_data) {
+  yr <- 0
+  lp_yr <- 0
+  means <- c()
+  prev_diff <- 0
+  
+  for (i in 1948:2021) {
+    if (((i %% 4 == 0) && (i %% 100 != 0)) || (i %% 400 == 0))
+      lp_yr <- lp_yr + 1
+    else 
+      yr <- yr + 1
+    
+    diff = (yr * 365) + (lp_yr * 366)
+    means <- c(means, mean(temp_data[(275 + prev_diff):(274+diff)]))
+    prev_diff <- diff
+  }
+  return(means)
+}
+
+get_januaries <- function(temp_data) {
+  yr <- 0
+  lp_yr <- 0
+  jan_temps <- c()
+  diff <- 0
+  
+  for (i in 1948:2022) {
+    if (((i %% 4 == 0) && (i %% 100 != 0)) || (i %% 400 == 0))
+      lp_yr <- lp_yr + 1
+    else 
+      yr <- yr + 1
+    
+    jan_temps <- c(jan_temps, temp_data[(275 + diff):(274+diff+31)])
+    diff = (yr * 365) + (lp_yr * 366)
+  }
+  return(jan_temps)
+}
+```
+
+## Introduction
+
+As the Great Salt Lake continues to lose volume, climate anxiety is again present in a portion of Utah's legislative effort. Anxiety is useless if it is unsupported by acceptable statistical significance. Thus, it is critical to ground concern within the bounds of convincing statistics. Based on historical climate data, we may be able to determine how anomalous the current state of affairs really is. For example, can we determine if Utah is drier than it was 80 years ago? Are more recent years driving up the "hottest year" ever recorded in Utah? Likewise, if climate change is driving extremes in both directions, how close are recent years to the "coldest year" on record in Utah? Perhaps to get a glimpse of the most extreme cold weather, we could define the average low temperature in Salt Lake City in January. These metrics would allow us to determine how confident we can be that our current climate is anomalous. To determine these factors, we will use data from the National 
+Oceanic and Atmospheric Administration (NOAA).
+
+## NOAA Exploration
+
+To begin, we have to learn to navigate the databases of the NOAA. There is data available to help us answer the questions before us, but we will need to see what kind of data exists, and then amend our questions based on available data so we can come up with more statistical answers. The database seems to break their data into a few main categories. We are interested in sections that contain recent data like Local Climatological Data and Annual Climate Normals. The tool we are most interested in is "Daily Summaries". This tool contains daily weather data for many stations around the globe. Their measurements include daily high and low temperatures, precipitation, snowfall, and weather types. We can obtain these data for any weather station in the database. To gather relevant and useful data we have to determine methods to operationalize the general questions mentioned before into numerical problems.
+
+## Methodology
+
+We have to develop a method of data analysis for each question that will allow us to make every question measurable.
+
+1) Is Utah drier than it was 80 years ago?
+Dryness is dependent on a number of factors including precipitation, humidity, and snowpack. The data we will gather from "Daily Summaries" contains information on daily precipitation, snowfall, and snow pack. We will target Salt Lake County specifically to include the variability of multiple stations while reducing the geographical area represented by the sample. To compare across decades, we will consider all days within the years 1935 to 1944 and all the days within the years 2012 to 2021. From each sample, we will establish a confidence interval for the difference in mean precipitation during each time period. These samples do not provide continuous snowpack or climate information which may be critical in quantifying the "dryness" of a particular period of time. Demand for water also plays a role in the relative sense of "dryness", and modern demand is much higher, so it may be more beneficial to compare precipitation and snowpack levels to estimated water usage between the decades. Since we don't have access to usage data, we are really answering the question **"On average, did Salt Lake County receive more rainfall and snowfall from 1935 to 1944, or in the past decade from 2012 to 2021?"** To get data coverage across this time period, we need to collect data from all weather stations in Salt Lake County. This will *NOT* constitute a simple random sample because precipitation data is collected systematically in fixed locations. The available station data might be evenly representative of the geography, but this is perhaps better than using data from a single station.
+
+2) What is the average temperature in Salt Lake City in January?
+The notion of "average temperature" is not very informative, since the average person really wants to know "How cold will it be if I decide to take a ski trip to Salt Lake City?" The question we should answer is "What are the average high and low temperatures in Salt Lake City in January?". The weather station at Salt Lake International Airport has taken data since 1948, so this is a consistent source for sample data. A sample of all days in January between the years 1948 and 2022 will yield the summary statistics needed to establish a sampling distribution. From this sample, we can make a prediction of the average (with estimate bounds) for the high and low temperatures in Salt Lake City. We are really answering **"What are the average January high and low temperatures in Salt Lake City since 1948?"**
+
+3) What is the "hottest year" on record in Utah?
+For the purposes of our analysis, we will take the "hottest year" to mean the year with the highest average high temperature. If we had it, we could incorporate data that explains what other factors make humans feel subjectively hotter like humidity levels, UV index, average directness of sunlight, etc. Since we are focusing on public climatology data, we will really answer the question **"In which year (since 1948) has Salt Lake City likely experienced its hottest average high temperature?"** Data from the Salt Lake City Airport weather station spans the years 1948 to 2022. We will use the population of data to determine which of those years has the highest average high temperature. Since temperature is continuous and felt subjectively by different people, years that have greater difference between high and low temperatures may also feel hotter. Because these things are subjective, we will stick to the simple analysis of averages across the whole year. 
+
+4) What is the "coldest year" on record in Utah?
+For the purposes of our analysis, we will take the "coldest year" to mean the year with the lowest average low temperature. Our procedure here would be very similar to that of question 3, but we would use daily temperature lows to determine the year with the coldest average low.
+
+## Data Collection and Analysis
+
+To execute our plan, we will need to collect all the necessary daily summaries as explained above.
+
+```{r, echo=TRUE}
+#DAPR - Number of days included in the multiday precipitation total (MDPR)
+#SNOW - Snowfall
+#TMAX - Maximum temperature
+#TMIN - Minimum temperature
+#PRCP - Precipitation
+#TOBS - Temperature at the time of observation
+#MDPR - Multiday precipitation total (use with DAPR and DWPR, if available)
+#MDSF - Multiday snowfall total
+#SNWD - Snow depth
+#DASF - Number of days included in the multiday snow fall total (MDSF)
+
+precip_data_2012_2021 = read.csv("data/2925051.csv")
+precip_data_1935_1944 = read.csv("data/2925049.csv")
+temp_data_1948_2021 = read.csv("data/2919766.csv")
+old_data_1905_1914 = read.csv("data/2919762.csv")
+brighton_1935_1954 = read.csv("data/2919809.csv")
+brighton_1992_2022 = read.csv("data/2919805.csv")
+```
+
+
+**Question 1: On average, did Salt Lake County receive more rainfall from 1935 to 1944, or in the past decade from 2012 to 2021?**
+Data was collected for all available weather stations in Salt Lake County for the given time period. It should be noted that between 2012-2021 there were 109,953 observations of precipitation at 55 weather stations, but in 1935-1944 there were 31,717 observations of precipitation across 14 weather stations. The weather stations that represent available data from 1935-1944 are more representative of the north half of the county, and the more current data seems to follow this trend. This is an issue of human geography and population density. Since storms cover a continuous area, it is acceptable to compare data between the two times.
+
+Weather stations used 2012-2021:
+```{r}
+all_modern_stations = precip_data_2012_2021$NAME
+all_past_stations = precip_data_1935_1944$NAME
+
+modern_stations = unique(all_modern_stations)
+past_stations = unique(all_past_stations)
+
+print(modern_stations)
+```
+
+Weather stations used 1935-1944:
+```{r}
+print(past_stations)
+```
+
+The following is a Welch Two Sample t-test (difference-of-means test) for the difference between average rainfall in Salt Lake County from 1935-1944 and 2012-2021. The confidence interval for the difference of means was calculated to alpha=0.05 or 95% confidence.
+
+```{r}
+precip_n = 2000
+precip_alpha = 0.05
+old_precip = precip_data_1935_1944$PRCP
+new_precip = precip_data_2012_2021$PRCP
+
+# acquire sample to analyze from 80 years ago
+#random_old_days = sample(1:31717, 30000, replace=FALSE)
+#precip_old_sample = old_precip[random_old_days]
+
+#acquire more recent sample to analyze
+#random_recent_days = sample(1:109953, 30000, replace=FALSE)
+#precip_recent_sample = new_precip[random_recent_days]
+
+precip_interval = t.test(old_precip, new_precip, conf.level=(1-precip_alpha))
+print(precip_interval)
+```
+
+This interval demonstrates with 95% confidence that one can expect the average daily rainfall in 2012-2021 to be about 2.75 to 7.55 thousandths of an inch greater than the daily average rainfall from 1935-1944. It is significant that the confidence interval does not cross 0, so there is evidence that the average rainfall was greater between 2012-2021. However, the sampling methods were not random, and the weather stations collect information daily at a fixed location. These factors affect the confidence of this interval in unquantifiable ways. Perhaps if the snowfall average indicates the same trend there will be a bit more confidence in both intervals.
+
+The following is a Welch Two Sample t-test (difference-of-means test) for the difference between average snowfall in Salt Lake County from 1935-1944 and 2012-2021. The confidence interval for the difference of means was calculated to alpha=0.05 or 95% confidence.
+
+```{r}
+old_snow = precip_data_1935_1944$SNOW
+new_snow = precip_data_2012_2021$SNOW
+
+snow_interval = t.test(old_snow, new_snow, conf.level=(1-precip_alpha))
+print(snow_interval)
+```
+This test found with 95% confidence that average daily snowfall was greater in 1935-1944 by between about 0.079 and 0.120 inches. Again, the confidence is diminished by the sampling method. This interval provides evidence that there was more precipitation from 1935-1944, which may clash with the results for rainfall. The results of these tests together perhaps indicate that, if there was more snow in 1935-1944 and more rain in 2012-2021, then perhaps Salt Lake County is not *dryer* than it was 80 years ago, but *warmer*. Of course confidence in these results is limited given the sampling and data collection limitations. It was unrealistic to attempt to obtain truly random data based on the researcher's means to collect data. NOAA's systematic samples are sufficient, but reduce the robustness of the study. Further temperature and climate analysis would be required to make confident claims about any shift in temperature changing the nature of Salt Lake's precipitation in the last 80 years. 
+
+
+**Question 2: What are the average January high and low temperatures in Salt Lake City since 1948?**
+
+The following results are given with 95% confidence. Hence, $\alpha = 0.05$.
+
+```{r}
+jan_n = 200
+jan_alpha = 0.05
+january_high_temps = get_januaries(temp_data_1948_2021$TMAX)
+
+#random_high_days = sample(1:2325, 200, replace=FALSE)
+#january_high_sample = pop_january_high_temps[random_high_days]
+
+mean_jan_high_sample = mean(january_high_temps)
+sd_jan_high_sample = sd(january_high_temps)
+
+january_low_temps = get_januaries(temp_data_1948_2021$TMIN)
+
+#random_low_days = sample(1:2325, 200, replace=FALSE)
+#january_low_sample = pop_january_low_temps[random_low_days]
+
+mean_jan_low_sample = mean(january_low_temps)
+sd_jan_low_sample = sd(january_low_temps)
+```
+
+Collecting large Simple Random Samples for each high and low temperatures would diminish potential error. Sadly, these are not Simple Random Samples because NOAA obtains data systematically over time. This negatively impacts the convidence of the interval in unknown ways. Even so, the Central Limit Theorem dictates that the sample mean $(\bar{x})$ and standard deviation $(s)$ can be used to approximate the population mean $(\mu)$ and standard deviation $(\sigma)$. The population mean is also the mean of the sampling distribution $(\mu_{\bar{x}})$, and the standard deviation of the sampling distribution $(s_{\bar{x}})$ is given as 
+
+$s_{\bar{x}} = \frac{s}{\sqrt{n}}$
+
+```{r}
+s_x_bar_jan_high = sd_jan_high_sample / sqrt(jan_n)
+
+quantile = qt(1 - (jan_alpha/2), df=199)
+jan_high_interval_high = mean_jan_high_sample + quantile*s_x_bar_jan_high
+jan_high_interval_low = mean_jan_high_sample - quantile*s_x_bar_jan_high
+
+s_x_bar_jan_low = sd_jan_low_sample / sqrt(jan_n)
+
+quantile = qt(1 - (jan_alpha/2), df=199)
+jan_low_interval_high = mean_jan_low_sample + quantile*s_x_bar_jan_low
+jan_low_interval_low = mean_jan_low_sample - quantile*s_x_bar_jan_low
+```
+
+The confidence intervals for average high and low temperatures in Salt Lake City in January are given below, based on a t-test.
+
+Interval of average January high temperature in Salt Lake:
+```{r}
+jan_high_interval = c(jan_high_interval_low, jan_high_interval_high)
+print(jan_high_interval)
+```
+
+Interval of average January low temperature in Salt Lake:
+```{r}
+jan_low_interval = c(jan_low_interval_low, jan_low_interval_high)
+print(jan_low_interval)
+```
+
+We are 95% confident that the true average high and low January temperatures in Salt Lake City are found within these intervals. Of course, we have to acknowledge that these samples were taken systematically, like all others. Because of the lack of randomness, these statistical tests provide unquantifiably less robust results. We would be more confident about our results if temperatures were collected more frequently so we obtained a nearly continuous measure of temperature from which to sample random days. These results are also only representative of the area near the SLC Int'l Airport weather station, since those were the only observations involved.
+
+
+**Question 3: In which year (since 1948) has Salt Lake City likely experienced its hottest average high temperature?**
+
+To answer this question we will analyze sample data collected at the SLC Int'l Airport. This station is near a population center and contains a broad and reliable set of data points, which makes it suitable to study a broad range of years more consistently. This will yield a distribution of 74 averages to fit the 74 years of sampling time.
+
+```{r, echo=TRUE}
+airport_highs = temp_data_1948_2021$TMAX
+yearly_high_temp_means = get_yearly_means(airport_highs)
+
+
+pos_hottest_year = yearly_high_temp_means > (max(yearly_high_temp_means - 0.1))
+hottest_year = c()
+
+for (i in 1 : length(pos_hottest_year)){
+  if (pos_hottest_year[i] == TRUE)
+    hottest_year = c(hottest_year, i + 1947)
+}
+
+hist(yearly_high_temp_means, breaks=20, col=rgb(0,0.7,0.6), xlab = "Yearly Average High Temperature (degrees F)")
+
+#hist(yearly_temp_means, breaks=20, col=rgb(0,1,0, alpha = 0.3), freq=FALSE)
+#hist(rnorm(10000, mean = mean(yearly_temp_means), sd=sd(yearly_temp_means)), breaks=20, add=TRUE, col=rgb(1,0,0, alpha = 0.3), freq=FALSE)
+print(hottest_year)
+print(max(yearly_high_temp_means))
+```
+
+From this analysis, the year 2012 had the hottest average high temperature (67.88525 degrees F) as observed from SLC Int'l Airport. By observation, the distribution of yearly average high temperatures appears to be fairly symmetrical. The quantile of the 2021 average will indicate how anomalous it is.
+
+```{r}
+average_yearly_high_temp_mean = mean(yearly_high_temp_means)
+sd_yearly_high_temp_means = sd(yearly_high_temp_means)
+
+hottest_year_score = (max(yearly_high_temp_means) - average_yearly_high_temp_mean) / sd_yearly_high_temp_means
+```
+
+The 2012 mean high temperature is about 2.3 standard deviations above the average mean temperature. Since our original question only deals with the hottest year "on record" in Salt Lake City, we don't have to worry about providing evidence that the average high temp in 2012 is anomalous outside our sample. This is acceptable because the notion of "Utah" breaks down too far in the past anyway. Rather, the observation illustrates the likelihood that a year with the same average high temperature as 2012 will occur again. However, yearly temperatures could be dependent on a number of factors including climate change, so the independence of each year's average is questionable. This calls into question the validity of the Central Limit Theorem, which is why we cannot make a normal approximation of the sampling distribution. Any trends that average yearly highs follow over time would provide a qualitative measurement for the independence of each year's mean high temperature.
+
+```{r}
+plot(c(1948:2021), yearly_high_temp_means, xlab = "Year (1948-2021)", ylab = "Mean High Temperature (F)")
+```
+
+This plot seems fairly scattered, but no trends can be determined without regression analysis. Within the scope of this study, we can only conclude with confidence that the year 2012 had the hottest average high temperature (67.88525 degrees F) as observed from SLC Int'l Airport, and that temperature is 2.297 standard deviations above the mean yearly average high temperatures in Salt Lake City between the years 1948 and 2021.
+
+
+**Question 4: In which year (since 1948) has Salt Lake City likely experienced its coldest average low temperature?**
+
+To answer this question we will analyze the same sample data collected at the SLC Int'l Airport. This will yield a distribution of 74 averages to fit the same 74 years of sampling time.
+
+```{r, echo=TRUE}
+airport_lows = temp_data_1948_2021$TMIN
+yearly_low_temp_means = get_yearly_means(airport_lows)
+
+
+pos_coldest_year = yearly_low_temp_means < (min(yearly_low_temp_means + 0.1))
+coldest_year = c()
+
+for (i in 1 : length(pos_coldest_year)){
+  if (pos_coldest_year[i] == TRUE)
+    coldest_year = c(coldest_year, i + 1947)
+}
+
+hist(yearly_low_temp_means, breaks=20, col=rgb(0,0.7,0.6), xlab = "Yearly Average High Temperature (degrees F)")
+
+#hist(yearly_temp_means, breaks=20, col=rgb(0,1,0, alpha = 0.3), freq=FALSE)
+#hist(rnorm(10000, mean = mean(yearly_temp_means), sd=sd(yearly_temp_means)), breaks=20, add=TRUE, col=rgb(1,0,0, alpha = 0.3), freq=FALSE)
+print(coldest_year)
+print(min(yearly_low_temp_means))
+```
+
+From this analysis, the year 1964 had the coldest average low temperature (35.52186 degrees F) as observed from SLC Int'l Airport. By observation, the distribution of yearly average high temperatures appears to be fairly symmetrical. The quantile of the 1964 average will indicate how anomalous it is.
+
+```{r}
+average_yearly_low_temp_mean = mean(yearly_low_temp_means)
+sd_yearly_low_temp_means = sd(yearly_low_temp_means)
+
+coldest_year_score = (min(yearly_low_temp_means) - average_yearly_low_temp_mean) / sd_yearly_low_temp_means
+```
+
+The average low temperature from 1964 is 2.464 standard deviations below the sampling distribution for yearly mean low temperatures. As before, because we are only trying to determine the "coldest year on record", we don't need to make any strong conclusions about how likely it is for a year as cold on average as 1964 to occur again. Since temperature is not necessarily independent, we cannot confidently approximate this distribution normally by the Central Limit Theorem. Nevertheless, we can conclude that the year with the coldest average low temperature was 1964, whose average low temperature lies 2.464 standard deviations from the average mean low temperature. 
+
+## Conclusion
+None of our research questions have definitive answers. As with all statistical analysis, we have gauged the confidence of our estimates based on sampling methods, analysis method requirements, and confidence intervals. We determined with 95% confidence that one can expect the average Salt Lake County daily rainfall in 2012-2021 to be about 2.75 to 7.55 thousandths of an inch greater than the daily average rainfall from 1935-1944. We also determined with 95% confidence that Salt Lake County's average daily snowfall was greater in 1935-1944 by between about 0.079 and 0.120 inches. This indicates that it is inconclusive which decade is "dryer", but that more recent years may yield warmer precipitation on average. We also determined with 95% confidence that the average January high temperature near the SLC Int'l Airport is between 36.26 and 38.81 degrees Fahrenheit. We are 95% confident that the average low temperature near SLC Int'l Airport in January is between 19.37 and 22.26 degrees Fahrenheit. Our confidence in these results is lessened by NOAA's systematic sampling methods, which may not include the true maximum and minimum daily temperatures for any given day. These limitations continue with our pursuit of the "hottest" and "coldest" years on record. We determined that the year 2012 had the hottest average high temperature (67.88525 degrees F) and the year 1964 had the coldest average low temperature (35.52186 degrees F) as observed from SLC Int'l Airport. The relative feeling of the outdoor temperature is also based on people's perception, which is challenging to measure. Even despite the limitations of collecting data systematically at fixed locations, we can draw some relatively confident conclusions. In future work, studies could include some of the data proposed throughout such as relative water demand and human temperature perception. This may yield more interesting and impactful results.
