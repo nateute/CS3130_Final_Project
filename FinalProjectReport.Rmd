@@ -7,6 +7,19 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+#Forecasts
+SLC_Forecast <- read.csv("forecast_data/SLC_forecast.csv")
+KSL_Forecast <- read.csv("forecast_data/KSL_forecast.csv")
+NY_Forecast <- read.csv("forecast_data/NY_forecast.csv")
+CHI_Forecast <- read.csv("forecast_data/CHI_forecast.csv")
+ATX_Forecast <- read.csv("forecast_data/ATX_forecast.csv")
+SF_Forecast <- read.csv("forecast_data/SF_forecast.csv")
+#Actual temperatures
+SLC_Actual <- read.csv("actualTemp_data/SLC_ActualTemp.csv")
+NY_Actual <- read.csv("actualTemp_data/NY_ActualTemp.csv")
+CH_Actual <- read.csv("actualTemp_data/CH_ActualTemp.csv")
+ATX_Actual <- read.csv("actualTemp_data/ATX_ActualTemp.csv")
+SF_Actual <- read.csv("actualTemp_data/SF_ActualTemp.csv")
 ```
 
 ## Introduction
