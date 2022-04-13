@@ -69,13 +69,55 @@ This is an optional subsection, but it may make the document flow better. Here m
 
 Make meaningful analysis of the data with respect to the question of the topic. Unlike the previous subsection, go much more into detail here. Explain what certain data trends and values relate to the question and possibly make inferences that could be understood outside of statistics (you can think of the starting paragraph discussion on the Assignment 3 Canvas page).
 
-1) In Salt Lake City, is the 7th day of the local KSL weather forecast more or less accurate than the 7th day of the forecast provided by the U. S. National Weather Service?
+###*1) In Salt Lake City, is the 7th day of the local KSL weather forecast more or less accurate than the 7th day of the forecast provided by the U. S. National Weather Service?*
 
-2) Of the cities Salt Lake City, UT; Austin, TX; San Francisco, CA; New York, NY; and Chicago, IL; which city's 10th forecast day is, on average, closest to the actual temperature that day?
+Since the data was collected twice a day over a series of days, there are a total of 14 predictions from KSL and 20 from Weather Channel. The data appears as follows:
+```{r}
+head(KSL_Forecast)
+```
 
-3) Does the city with the "most accurate" forecast according to question 2 also have the least variability in temperature over the given time period?
+The data is formatted to show the date on the left and the forecast high vs low. The number of the column indicates how many measurements from the actual day that measurement was collected. For example, X13 means the measurement was taken on the evening of the 7th day before the day on the column. For the purpose of analyzing the second day, X14 will provide the morning of the 7th day of advance. The next step will provide four 95% confidence intervals for the mean difference between 7th day predictions and actual temperature. The intervals will measure this difference for each the high and the low temperature for each weather forecast source. The forecast error will be measured as $T_{actual} - T_{predicted} = T_{error}$. 
 
-4) Do the cities with the "less accurate" forecast according to question 2 also exhibit the greatest change in average temperature or temperature variance since 80 years ago?
+```{r, echo=T}
+KSL_hi_forecast <- KSL_Forecast$X14[c(seq(1,57,2))]
+KSL_hi_forecast_diff <- SLC_Actual$TMAX - KSL_hi_forecast
+
+KSL_lo_forecast <- KSL_Forecast$X14[c(seq(2,58,2))]
+KSL_lo_forecast_diff <- SLC_Actual$TMIN - KSL_lo_forecast
+
+SLC_hi_forecast <- SLC_Forecast$X14[c(seq(1,57,2))]
+SLC_hi_forecast_diff <- SLC_Actual$TMAX - SLC_hi_forecast
+
+SLC_lo_forecast <- SLC_Forecast$X14[c(seq(2,58,2))]
+SLC_lo_forecast_diff <- SLC_Actual$TMIN - SLC_lo_forecast
+```
+
+The difference datasets are prepared to yield confidence intervals through One Sample t-tests. First, the dataset for KSL difference in highs will be examined:
+```{r}
+t.test(KSL_hi_forecast_diff, conf.level = 0.95)
+```
+This test indicates that we are 95% confident that, on average, the true max temperature of any given day in Salt Lake City from mid-March to mid-April is -0.05 to 3.84 degrees hotter than KSL predicted a week earlier. This provides evidence that KSL's forecast *underpredicts* the high temperature over the date range.
+
+Next, examine the data for KSL's forecast lows.
+```{r}
+t.test(KSL_lo_forecast_diff, conf.level = 0.95)
+```
+This test indicates that we are 95% confident that, on average, the true low temperature of any given day in Salt Lake City from mid-March to mid-April is -1.44 to 2.89 degrees hotter than KSL predicted a week earlier. This provides evidence that KSL's forecast *underpredicts* the low temperature over the date range, but this interval is centered closer to zero than the highs, so there is evidence that the predictions are not as inacurate as they were with the highs.
+
+Then examine the data for The Weather Channel's forecast highs.
+```{r}
+t.test(SLC_hi_forecast_diff, conf.level = 0.95)
+```
+This test indicates that we are 95% confident that, on average, the true max temperature of any given day in Salt Lake City from mid-March to mid-April is 0.01 to 4.06 degrees hotter than The Weather Channel predicted a week earlier. This provides evidence that The Weather Channel's forecast *underpredicts* the high temperature over the date range. Because a difference of 0 is not included in the interval, we have fairly strong evidence that the forecast consistently underpredics the true high temperature.
+
+Finally, examine the data for The Weather Channel's forecast lows.
+```{r}
+t.test(SLC_lo_forecast_diff, conf.level = 0.95)
+```
+
+###*2) Of the cities Salt Lake City, UT; Austin, TX; San Francisco, CA; New York, NY; and Chicago, IL; which city's 10th forecast day is, on average, closest to the actual temperature that day?*
+
+###*3) Does the city with the "most accurate" forecast according to question 2 also have the least variability in temperature over the given time period?*
 
 ## Conclusion
 
