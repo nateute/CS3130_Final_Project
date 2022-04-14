@@ -81,13 +81,10 @@ The data is formatted to show the date on the left and the forecast high vs low.
 ```{r, echo=T}
 KSL_hi_forecast <- KSL_Forecast$X14[c(seq(1,57,2))]
 KSL_hi_forecast_diff <- SLC_Actual$TMAX - KSL_hi_forecast
-
 KSL_lo_forecast <- KSL_Forecast$X14[c(seq(2,58,2))]
 KSL_lo_forecast_diff <- SLC_Actual$TMIN - KSL_lo_forecast
-
 SLC_hi_forecast <- SLC_Forecast$X14[c(seq(1,57,2))]
 SLC_hi_forecast_diff <- SLC_Actual$TMAX - SLC_hi_forecast
-
 SLC_lo_forecast <- SLC_Forecast$X14[c(seq(2,58,2))]
 SLC_lo_forecast_diff <- SLC_Actual$TMIN - SLC_lo_forecast
 ```
@@ -116,6 +113,95 @@ t.test(SLC_lo_forecast_diff, conf.level = 0.95)
 ```
 
 ###*2) Of the cities Salt Lake City, UT; Austin, TX; San Francisco, CA; New York, NY; and Chicago, IL; which city's 10th forecast day is, on average, closest to the actual temperature that day?*
+
+SLC graph
+
+```{r, echo = FALSE}
+SLC_forecastMean <- (SLC_Forecast$X20[c(seq(1,57,2))]+SLC_Forecast$X19[c(seq(1,57,2))])/2
+plot(c(seq(1,29,1)), SLC_Actual$TMAX, type = "l", col = "green", ylim = c(45,80))
+lines(c(seq(1,29,1)), SLC_forecastMean, type = "l", col = "blue")
+legend(0,80, legend=c('Forecast', 'Recorded'),col=c('blue', 'green'), lty = 1)
+```
+
+SLC confidence interval
+
+```{r, echo = FALSE}
+t.test(SLC_Actual$TMAX, SLC_forecastMean, conf.level = .95)
+```
+
+We can say that, on average, the 10th day forecast deviated from the actual temperature by -.486 degrees to 8.313 degrees.
+
+######Note to self, the closer the confidence interval is to 0, the more acurate it is. We can say the above data is pretty unreliable and that they underestimated their temperature
+
+SF graph
+
+```{r, echo = FALSE}
+SF_forecastMean <- (SF_Forecast$X20[c(seq(1,57,2))]+SF_Forecast$X19[c(seq(1,57,2))])/2
+plot(c(seq(1,29,1)), SF_Actual$TMAX, type = "l", col = "green", ylim = c(45,85))
+lines(c(seq(1,29,1)), SF_forecastMean, type = "l", col = "blue")
+legend(0,80, legend=c('Forecast', 'Recorded'),col=c('blue', 'green'), lty = 1)
+```
+
+SF Confidence interval
+
+```{r, echo = FALSE}
+t.test(SF_Actual$TMAX, SF_forecastMean, conf.level = .95)
+```
+
+We can say that, on average, the 10th day forecast deviated from the actual temperature by -1.54 degrees to 4.609 degrees. Much more acurate prediction than SLC.
+
+NY graph
+
+```{r, echo = FALSE}
+NY_forecastMean <- (NY_Forecast$X20[c(seq(1,57,2))]+NY_Forecast$X19[c(seq(1,57,2))])/2
+plot(c(seq(1,29,1)), NY_Actual$TMAX, type = "l", col = "green", ylim = c(30,65))
+lines(c(seq(1,29,1)), NY_forecastMean, type = "l", col = "blue")
+legend(22,40, legend=c('Forecast', 'Recorded'),col=c('blue', 'green'), lty = 1)
+```
+
+NY Confidence interval
+
+```{r, echo = FALSE}
+t.test(NY_Actual$TMAX, NY_forecastMean, conf.level = .95)
+```
+
+We can say that, on average, the 10th day forecast deviated from the actual temperature by -5.407 degrees to 1.925 degrees. Much more acurate prediction than SLC, but not as acurate as SF.
+
+CH graph
+
+```{r, echo = FALSE}
+CH_forecastMean <- (CHI_Forecast$X20[c(seq(1,57,2))]+CHI_Forecast$X19[c(seq(1,57,2))])/2
+plot(c(seq(1,29,1)), CH_Actual$TMAX, type = "l", col = "green", ylim = c(25,75))
+lines(c(seq(1,29,1)), CH_forecastMean, type = "l", col = "blue")
+legend(22,40, legend=c('Forecast', 'Recorded'),col=c('blue', 'green'), lty = 1)
+```
+
+CH Confidence interval
+
+```{r, echo = FALSE}
+t.test(CH_Actual$TMAX, CH_forecastMean, conf.level = .95)
+```
+
+We can say that, on average, the 10th day forecast deviated from the actual temperature by -1.1796 degrees to 8.8692 degrees. This is probably the least accuratly predicted city.
+
+ATX graph
+
+```{r, echo = FALSE}
+ATX_forecastMean <- (ATX_Forecast$X20[c(seq(1,57,2))]+ATX_Forecast$X19[c(seq(1,57,2))])/2
+plot(c(seq(1,29,1)), ATX_Actual$TMAX, type = "l", col = "green", ylim = c(55,95))
+lines(c(seq(1,29,1)), ATX_forecastMean, type = "l", col = "blue")
+legend(22,65, legend=c('Forecast', 'Recorded'),col=c('blue', 'green'), lty = 1)
+```
+
+ATX Confidence interval
+
+```{r, echo = FALSE}
+t.test(ATX_Actual$TMAX, ATX_forecastMean, conf.level = .95)
+```
+
+We can say that, on average, the 10th day forecast deviated from the actual temperature by -3.9451 degrees to 2.7382 degrees. Which ties close with SF in accuracy.
+
+Overall, Austin TX (ATX) has the most accurate weather as the means for both the predicted and recorded data sets match each other near identically.
 
 ###*3) Does the city with the "most accurate" forecast according to question 2 also have the least variability in temperature over the given time period?*
 
