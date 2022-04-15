@@ -148,7 +148,7 @@ SF Confidence interval
 t.test(SF_Actual$TMAX, SF_forecastMean, conf.level = .95)
 ```
 
-We can say that, on average, the 10th day forecast deviated from the actual temperature by -1.54 degrees to 4.609 degrees. Much more acurate prediction than SLC.
+We can say that, on average, the 10th day forecast deviated from the actual temperature by -1.54 degrees to 4.609 degrees. Much more accurate prediction than SLC.
 
 NY graph
 
@@ -204,6 +204,85 @@ We can say that, on average, the 10th day forecast deviated from the actual temp
 Overall, Austin TX (ATX) has the most accurate weather as the means for both the predicted and recorded data sets match each other near identically.
 
 ###*3) Does the city with the "most accurate" forecast according to question 2 also have the least variability in temperature over the given time period?*
+
+**ATX** 
+
+
+```{r, echo = FALSE}
+# Averages of the 10th Forecast for MAX and MIN
+
+# ATX
+ATX_hi_forecastMean <- (ATX_Forecast$X20[c(seq(1,40,2))]+ATX_Forecast$X19[c(seq(1,40,2))])/2
+ATX_lo_forecastMean <- (ATX_Forecast$X20[c(seq(2,41,2))]+ATX_Forecast$X19[c(seq(2,41,2))])/2
+
+# ATX Test for variance
+var.test(ATX_Actual$TMAX[c(seq(1,20,1))],ATX_hi_forecastMean)
+var.test(ATX_Actual$TMIN[c(seq(1,20,1))],ATX_lo_forecastMean)
+
+plot(c(seq(1,20,1)), ATX_Actual$TMAX[c(seq(1,20,1))], type = "l", col = "red", ylim = c(20,95))
+lines(c(seq(1,20,1)), ATX_hi_forecastMean, type = "c", col = "red")
+lines(c(seq(1,20,1)), ATX_Actual$TMIN[c(seq(1,20,1))], type = "l", col = "blue")
+lines(c(seq(1,20,1)), ATX_lo_forecastMean, type = "c", col = "blue")
+legend(15,40, legend=c('Forecast MAX', 'Recorded MAX','Forecast MIN', 'Recorded MIN'),col=c('red', 'red','blue', 'blue'), lty = c(2,1,2,1), cex = 0.8)
+```
+
+**SLC** 
+```{r, echo = FALSE}
+# Averages of the 10th Forecast for MAX and MIN
+
+# SLC
+SLC_hi_forecastMean <- (SLC_Forecast$X20[c(seq(1,40,2))]+SLC_Forecast$X19[c(seq(1,40,2))])/2
+SLC_lo_forecastMean <- (SLC_Forecast$X20[c(seq(2,41,2))]+SLC_Forecast$X19[c(seq(2,41,2))])/2
+
+# SLC Test for variance
+var.test(SLC_Actual$TMAX[c(seq(1,20,1))],SLC_hi_forecastMean)
+var.test(SLC_Actual$TMIN[c(seq(1,20,1))],SLC_lo_forecastMean)
+
+plot(c(seq(1,20,1)), SLC_Actual$TMAX[c(seq(1,20,1))], type = "l", col = "red", ylim = c(20,95))
+lines(c(seq(1,20,1)), SLC_hi_forecastMean, type = "c", col = "red")
+lines(c(seq(1,20,1)), SLC_Actual$TMIN[c(seq(1,20,1))], type = "l", col = "blue")
+lines(c(seq(1,20,1)), SLC_lo_forecastMean, type = "c", col = "blue")
+legend(15,40, legend=c('Forecast MAX', 'Recorded MAX','Forecast MIN', 'Recorded MIN'),col=c('red', 'red','blue', 'blue'), lty = c(2,1,2,1), cex = 0.8)
+```
+
+**CHI**
+```{r, echo = FALSE}
+# Averages of the 10th Forecast for MAX and MIN
+
+# CHI
+CHI_hi_forecastMean <- (CHI_Forecast$X20[c(seq(1,40,2))]+CHI_Forecast$X19[c(seq(1,40,2))])/2
+CHI_lo_forecastMean <- (CHI_Forecast$X20[c(seq(2,41,2))]+CHI_Forecast$X19[c(seq(2,41,2))])/2
+
+# CHI Test for variance
+var.test(CH_Actual$TMAX[c(seq(1,20,1))],CHI_hi_forecastMean)
+var.test(CH_Actual$TMIN[c(seq(1,20,1))],CHI_lo_forecastMean)
+
+plot(c(seq(1,20,1)), CH_Actual$TMAX[c(seq(1,20,1))], type = "l", col = "red", ylim = c(20,95))
+lines(c(seq(1,20,1)), CHI_hi_forecastMean, type = "c", col = "red")
+lines(c(seq(1,20,1)), CH_Actual$TMIN[c(seq(1,20,1))], type = "l", col = "blue")
+lines(c(seq(1,20,1)), CHI_lo_forecastMean, type = "c", col = "blue")
+legend(15,90, legend=c('Forecast MAX', 'Recorded MAX','Forecast MIN', 'Recorded MIN'),col=c('red', 'red','blue', 'blue'), lty = c(2,1,2,1), cex = 0.8)
+```
+
+
+**NY**
+```{r, echo = FALSE}
+# Averages of the 10th Forecast for MAX and MIN
+
+# NY
+NY_hi_forecastMean <- (NY_Forecast$X20[c(seq(1,40,2))]+NY_Forecast$X19[c(seq(1,40,2))])/2
+NY_lo_forecastMean <- (NY_Forecast$X20[c(seq(2,41,2))]+NY_Forecast$X19[c(seq(2,41,2))])/2
+
+# NY Test for variance
+var.test(NY_Actual$TMAX[c(seq(1,20,1))],NY_hi_forecastMean)
+var.test(NY_Actual$TMIN[c(seq(1,20,1))],NY_lo_forecastMean)
+
+plot(c(seq(1,20,1)), NY_Actual$TMAX[c(seq(1,20,1))], type = "l", col = "red", ylim = c(20,95))
+lines(c(seq(1,20,1)), NY_hi_forecastMean, type = "c", col = "red")
+lines(c(seq(1,20,1)), NY_Actual$TMIN[c(seq(1,20,1))], type = "l", col = "blue")
+lines(c(seq(1,20,1)), NY_lo_forecastMean, type = "c", col = "blue")
+legend(15,90, legend=c('Forecast MAX', 'Recorded MAX','Forecast MIN', 'Recorded MIN'),col=c('red', 'red','blue', 'blue'), lty = c(2,1,2,1), cex = 0.8)
+```
 
 ## Conclusion
 
