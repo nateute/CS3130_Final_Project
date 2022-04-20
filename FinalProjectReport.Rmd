@@ -69,7 +69,7 @@ This is an optional subsection, but it may make the document flow better. Here m
 
 Make meaningful analysis of the data with respect to the question of the topic. Unlike the previous subsection, go much more into detail here. Explain what certain data trends and values relate to the question and possibly make inferences that could be understood outside of statistics (you can think of the starting paragraph discussion on the Assignment 3 Canvas page).
 
-**1) In Salt Lake City, is the seventh day of the local KSL weather forecast more or less accurate than the seventh day of the forecast provided by the U. S. National Weather Service?**
+### *1) In Salt Lake City, is the seventh day of the local KSL weather forecast more or less accurate than the seventh day of the forecast provided by the U. S. National Weather Service?**
 
 ##Methodology
 To answer Question 1, Salt Lake City data from the KSL weather forecast of high and low temperatures between the days of March 12, 2022 and April 9, 2022 will be compared to the actual Tmax and Tmin collected by the KSLC weather station at Salt Lake International Airport during the same date range. We will construct a hypothesis test with an alpha value of 0.05. The hypothesis will be tested through a Two Sample t-test since the population standard deviation of the continuous forecast for the given months is unknown. To provide more information on the accuracy of both forecasts, we will also construct 95% confidence intervals for the mean error of each forecast's seventh day prediction. Since the forecast data was collected twice a day, we will only consider the prediction from the morning of the seventh day. This will provide us with almost a full week of advance. The following is the numerical representation of the null hypothesis:
@@ -90,13 +90,10 @@ The data is formatted to show the date on the left and the forecast high vs low.
 ```{r, echo=F}
 KSL_hi_forecast <- KSL_Forecast$X14[c(seq(1,57,2))]
 KSL_hi_forecast_diff <- SLC_Actual$TMAX - KSL_hi_forecast
-
 KSL_lo_forecast <- KSL_Forecast$X14[c(seq(2,58,2))]
 KSL_lo_forecast_diff <- SLC_Actual$TMIN - KSL_lo_forecast
-
 SLC_hi_forecast <- SLC_Forecast$X14[c(seq(1,57,2))]
 SLC_hi_forecast_diff <- SLC_Actual$TMAX - SLC_hi_forecast
-
 SLC_lo_forecast <- SLC_Forecast$X14[c(seq(2,58,2))]
 SLC_lo_forecast_diff <- SLC_Actual$TMIN - SLC_lo_forecast
 ```
@@ -135,113 +132,118 @@ With each of these tests conducted, we can see that the difference between actua
 
 The confidence of these conclusions is dampened by a few factors from our data collection. First, neither our forecast samples nor our actual temperature samples are random samples. This may be acceptable for the forecast on the basis that forecasts are updated systematically. However, regarding the actual temperature high and low, the SLC Int'l weather station samples temperature on a fixed interval, so it may not capture the true temperature high or low for any given day. Determining the likelihood of this error is beyond the scope of this study.
 
-###*2) Of the cities Salt Lake City, UT; Austin, TX; San Francisco, CA; New York, NY; and Chicago, IL; which city's 10th forecast day is, on average, closest to the actual temperature that day?*
+### *2) Of the cities Salt Lake City, UT; Austin, TX; San Francisco, CA; New York, NY; and Chicago, IL; which city's 10th forecast day is, on average, closest to the actual temperature that day?*
 
-SLC graph
+To answer this question, this report uses the highs of each day recorded in our one month sample and the averaged forecasted highs of said day given a ten day forecast. Since tenth day forecasts fluctuate considerably, it was important to take two recordings of the highs of those days and average them to get the tenth day forecast. Below is data from each of the recorded cities, showing the difference between the tenth day forecast and the actual high temperatures of those days.
+
+#### Salt Lake City
 
 ```{r, echo = FALSE}
 SLC_forecastMean <- (SLC_Forecast$X20[c(seq(1,57,2))]+SLC_Forecast$X19[c(seq(1,57,2))])/2
-plot(c(seq(1,29,1)), SLC_Actual$TMAX, type = "l", col = "green", ylim = c(45,80))
+plot(c(seq(1,29,1)), SLC_Actual$TMAX, type = "l", col = "green", ylim = c(45,80), main = "Salt Lake City, UT Forecasted Against Recorded Temperatures", ylab = "Degrees in Fahrenheit", xlab = "Days (3/12/22 - 4/9/22)")
 lines(c(seq(1,29,1)), SLC_forecastMean, type = "l", col = "blue")
 legend(0,80, legend=c('Forecast', 'Recorded'),col=c('blue', 'green'), lty = 1)
 ```
 
-SLC confidence interval
+Since KSL only does seven-day forecasts, this report had to use the data given by NOAA. The graph above shows similar weather trends for both forecasted and recorded temperature highs, but there is a major difference on the 14th through 18th days, where the weather spiked much higher than what was forecasted. This could be seen as a timely outlier, though the rest of the data is so off that this outlier most likely does not change the statistical difference of the both data sets.
 
 ```{r, echo = FALSE}
 t.test(SLC_Actual$TMAX, SLC_forecastMean, conf.level = .95)
 ```
 
-We can say that, on average, the 10th day forecast deviated from the actual temperature by -.486 degrees to 8.313 degrees.
+Given the above interval, this report concludes with 95% accuracy that the 10th day forecast deviated from the actual temperature by between -0.486 to 8.313 degrees, grossly underestimating the daily highs in most cases and occasionally overestimating the highs. All being said, March proved to be a month where the ten-day forecast was substantially off from the true temperatures.
 
-######Note to self, the closer the confidence interval is to 0, the more acurate it is. We can say the above data is pretty unreliable and that they underestimated their temperature
+#### San Francisco
 
-SF graph
+Going westward, San Francisco seemed to fair better at accurately predicting the weather ten days in advance.
 
 ```{r, echo = FALSE}
 SF_forecastMean <- (SF_Forecast$X20[c(seq(1,57,2))]+SF_Forecast$X19[c(seq(1,57,2))])/2
-plot(c(seq(1,29,1)), SF_Actual$TMAX, type = "l", col = "green", ylim = c(45,85))
+plot(c(seq(1,29,1)), SF_Actual$TMAX, type = "l", col = "green", ylim = c(45,85), main = "San Francisco, CA Forecasted Against Recorded Temperatures", ylab = "Degrees in Fahrenheit", xlab = "Days (3/12/22 - 4/9/22)")
 lines(c(seq(1,29,1)), SF_forecastMean, type = "l", col = "blue")
 legend(0,80, legend=c('Forecast', 'Recorded'),col=c('blue', 'green'), lty = 1)
 ```
 
-SF Confidence interval
+San Francisco had a couple of considerable spikes in temperature highs, but surprisingly maintained a much more accurate prediction of daily high temperatures compared to Salt Lake City.
 
 ```{r, echo = FALSE}
 t.test(SF_Actual$TMAX, SF_forecastMean, conf.level = .95)
 ```
 
-We can say that, on average, the 10th day forecast deviated from the actual temperature by -1.54 degrees to 4.609 degrees. Much more accurate prediction than SLC.
+On average and with the same confidence level as before, the 10th day forecast deviated from the actual temperature by -1.54 degrees to 4.609 degrees, giving a vastly more accurate prediction than Salt Lake City. 
 
-NY graph
+#### New York City
+
+New York City had some truly awful during the month of March 2022. So it may come as no surprise that ten-day forecasts there were not too accurate.
 
 ```{r, echo = FALSE}
 NY_forecastMean <- (NY_Forecast$X20[c(seq(1,57,2))]+NY_Forecast$X19[c(seq(1,57,2))])/2
-plot(c(seq(1,29,1)), NY_Actual$TMAX, type = "l", col = "green", ylim = c(30,65))
+plot(c(seq(1,29,1)), NY_Actual$TMAX, type = "l", col = "green", ylim = c(30,65), main = "New York City, NY Forecasted Against Recorded Temperatures", ylab = "Degrees in Fahrenheit", xlab = "Days (3/12/22 - 4/9/22)")
 lines(c(seq(1,29,1)), NY_forecastMean, type = "l", col = "blue")
 legend(22,40, legend=c('Forecast', 'Recorded'),col=c('blue', 'green'), lty = 1)
 ```
 
-NY Confidence interval
+That being said, the predictions were not as far off as one may think. In fact, New York Cities predictions were more accurate than even Salt Lake City.
 
 ```{r, echo = FALSE}
 t.test(NY_Actual$TMAX, NY_forecastMean, conf.level = .95)
 ```
 
-We can say that, on average, the 10th day forecast deviated from the actual temperature by -5.407 degrees to 1.925 degrees. Much more acurate prediction than SLC, but not as acurate as SF.
+Given this reports 95% accuracy on data analysis, the 10th day forecast deviated from the actual temperature by -5.407 degrees to 1.925 degrees, typically overestimating the daily highs. As mentioned before this is much more accurate than Salt Lake City, though it is not as accurate as San Francisco. However, had the data been collected at another point in the year the predictions may have faired better, though that goes with all the cities studied in this report.
 
-CH graph
+#### Chicago
+
+Chicago may have exhibited the most fluctuating weather patterns of the five studied cities. Unlike the previous cities though, the ten-day predictions were quite off.
 
 ```{r, echo = FALSE}
 CH_forecastMean <- (CHI_Forecast$X20[c(seq(1,57,2))]+CHI_Forecast$X19[c(seq(1,57,2))])/2
-plot(c(seq(1,29,1)), CH_Actual$TMAX, type = "l", col = "green", ylim = c(25,75))
+plot(c(seq(1,29,1)), CH_Actual$TMAX, type = "l", col = "green", ylim = c(25,75), main = "Chicago, IL Forecasted Against Recorded Temperatures", ylab = "Degrees in Fahrenheit", xlab = "Days (3/12/22 - 4/9/22)")
 lines(c(seq(1,29,1)), CH_forecastMean, type = "l", col = "blue")
 legend(22,40, legend=c('Forecast', 'Recorded'),col=c('blue', 'green'), lty = 1)
 ```
 
-CH Confidence interval
+One could argue that this may seem a bit unfair for the "Windy City" to have such unreliable predictions given the locations tumultuous weather. However, all of the previous cities experienced some form of temperature fluctuation and managed to keep some level of accuracy.
 
 ```{r, echo = FALSE}
 t.test(CH_Actual$TMAX, CH_forecastMean, conf.level = .95)
 ```
 
-We can say that, on average, the 10th day forecast deviated from the actual temperature by -1.1796 degrees to 8.8692 degrees. This is probably the least accuratly predicted city.
+To be exact and in continuation of the very same accuracy level as before, the forecasted temperature of Chicago differed from the actual temperature between -1.1796 degrees to 8.8692 degrees, making Chicago the least accurately predicted city within the studied group of cities. Given the time frame alloted to the making of this report, collecting weather data during the spring may have been what caused such inaccuracy in Chicago's forecasts. 
 
-ATX graph
+#### Austin
+
+The last city to be studied within the group was Austin, TX.
 
 ```{r, echo = FALSE}
 ATX_forecastMean <- (ATX_Forecast$X20[c(seq(1,57,2))]+ATX_Forecast$X19[c(seq(1,57,2))])/2
-plot(c(seq(1,29,1)), ATX_Actual$TMAX, type = "l", col = "green", ylim = c(55,95))
+plot(c(seq(1,29,1)), ATX_Actual$TMAX, type = "l", col = "green", ylim = c(55,95), main = "Austin, TX Forecasted Against Recorded Temperatures", ylab = "Degrees in Fahrenheit", xlab = "Days (3/12/22 - 4/9/22)")
 lines(c(seq(1,29,1)), ATX_forecastMean, type = "l", col = "blue")
 legend(22,65, legend=c('Forecast', 'Recorded'),col=c('blue', 'green'), lty = 1)
 ```
 
-ATX Confidence interval
+As seen clearly in the graph, the ten-day temperature predictions were quite accurate, even with the variability in temperature.
 
 ```{r, echo = FALSE}
 t.test(ATX_Actual$TMAX, ATX_forecastMean, conf.level = .95)
 ```
 
-We can say that, on average, the 10th day forecast deviated from the actual temperature by -3.9451 degrees to 2.7382 degrees. Which ties close with SF in accuracy.
+This reports concludes with a 95% accuracy that, on average, the 10th day forecast deviated from the actual temperature by -3.9451 degrees to 2.7382 degrees, which is just a bit more accurate than San Francisco. As such, Austin is the most accurate city of the selected cities that were recorded. However, variability can have noticeable impacts on the reliability of weather forecasts, as seen with the obvious example of Chicago.
 
-Overall, Austin TX (ATX) has the most accurate weather as the means for both the predicted and recorded data sets match each other near identically.
+### *3) Does the city with the "most accurate" forecast according to question 2 also have the least variability in temperature over the given time period?*
 
-###*3) Does the city with the "most accurate" forecast according to question 2 also have the least variability in temperature over the given time period?*
+Intro
 
 **ATX** 
 
 
 ```{r, echo = FALSE}
 # Averages of the 10th Forecast for MAX and MIN
-
 # ATX
 ATX_hi_forecastMean <- (ATX_Forecast$X20[c(seq(1,40,2))]+ATX_Forecast$X19[c(seq(1,40,2))])/2
 ATX_lo_forecastMean <- (ATX_Forecast$X20[c(seq(2,41,2))]+ATX_Forecast$X19[c(seq(2,41,2))])/2
-
 # ATX Test for variance
 var.test(ATX_Actual$TMAX[c(seq(1,20,1))],ATX_hi_forecastMean)
 var.test(ATX_Actual$TMIN[c(seq(1,20,1))],ATX_lo_forecastMean)
-
 plot(c(seq(1,20,1)), ATX_Actual$TMAX[c(seq(1,20,1))], type = "l", col = "red", ylim = c(20,95))
 lines(c(seq(1,20,1)), ATX_hi_forecastMean, type = "c", col = "red")
 lines(c(seq(1,20,1)), ATX_Actual$TMIN[c(seq(1,20,1))], type = "l", col = "blue")
@@ -252,15 +254,12 @@ legend(15,40, legend=c('Forecast MAX', 'Recorded MAX','Forecast MIN', 'Recorded 
 **SLC** 
 ```{r, echo = FALSE}
 # Averages of the 10th Forecast for MAX and MIN
-
 # SLC
 SLC_hi_forecastMean <- (SLC_Forecast$X20[c(seq(1,40,2))]+SLC_Forecast$X19[c(seq(1,40,2))])/2
 SLC_lo_forecastMean <- (SLC_Forecast$X20[c(seq(2,41,2))]+SLC_Forecast$X19[c(seq(2,41,2))])/2
-
 # SLC Test for variance
 var.test(SLC_Actual$TMAX[c(seq(1,20,1))],SLC_hi_forecastMean)
 var.test(SLC_Actual$TMIN[c(seq(1,20,1))],SLC_lo_forecastMean)
-
 plot(c(seq(1,20,1)), SLC_Actual$TMAX[c(seq(1,20,1))], type = "l", col = "red", ylim = c(20,95))
 lines(c(seq(1,20,1)), SLC_hi_forecastMean, type = "c", col = "red")
 lines(c(seq(1,20,1)), SLC_Actual$TMIN[c(seq(1,20,1))], type = "l", col = "blue")
@@ -271,15 +270,12 @@ legend(15,40, legend=c('Forecast MAX', 'Recorded MAX','Forecast MIN', 'Recorded 
 **CHI**
 ```{r, echo = FALSE}
 # Averages of the 10th Forecast for MAX and MIN
-
 # CHI
 CHI_hi_forecastMean <- (CHI_Forecast$X20[c(seq(1,40,2))]+CHI_Forecast$X19[c(seq(1,40,2))])/2
 CHI_lo_forecastMean <- (CHI_Forecast$X20[c(seq(2,41,2))]+CHI_Forecast$X19[c(seq(2,41,2))])/2
-
 # CHI Test for variance
 var.test(CH_Actual$TMAX[c(seq(1,20,1))],CHI_hi_forecastMean)
 var.test(CH_Actual$TMIN[c(seq(1,20,1))],CHI_lo_forecastMean)
-
 plot(c(seq(1,20,1)), CH_Actual$TMAX[c(seq(1,20,1))], type = "l", col = "red", ylim = c(20,95))
 lines(c(seq(1,20,1)), CHI_hi_forecastMean, type = "c", col = "red")
 lines(c(seq(1,20,1)), CH_Actual$TMIN[c(seq(1,20,1))], type = "l", col = "blue")
@@ -291,15 +287,12 @@ legend(15,90, legend=c('Forecast MAX', 'Recorded MAX','Forecast MIN', 'Recorded 
 **NY**
 ```{r, echo = FALSE}
 # Averages of the 10th Forecast for MAX and MIN
-
 # NY
 NY_hi_forecastMean <- (NY_Forecast$X20[c(seq(1,40,2))]+NY_Forecast$X19[c(seq(1,40,2))])/2
 NY_lo_forecastMean <- (NY_Forecast$X20[c(seq(2,41,2))]+NY_Forecast$X19[c(seq(2,41,2))])/2
-
 # NY Test for variance
 var.test(NY_Actual$TMAX[c(seq(1,20,1))],NY_hi_forecastMean)
 var.test(NY_Actual$TMIN[c(seq(1,20,1))],NY_lo_forecastMean)
-
 plot(c(seq(1,20,1)), NY_Actual$TMAX[c(seq(1,20,1))], type = "l", col = "red", ylim = c(20,95))
 lines(c(seq(1,20,1)), NY_hi_forecastMean, type = "c", col = "red")
 lines(c(seq(1,20,1)), NY_Actual$TMIN[c(seq(1,20,1))], type = "l", col = "blue")
