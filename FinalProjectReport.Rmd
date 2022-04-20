@@ -69,48 +69,71 @@ This is an optional subsection, but it may make the document flow better. Here m
 
 Make meaningful analysis of the data with respect to the question of the topic. Unlike the previous subsection, go much more into detail here. Explain what certain data trends and values relate to the question and possibly make inferences that could be understood outside of statistics (you can think of the starting paragraph discussion on the Assignment 3 Canvas page).
 
-###*1) In Salt Lake City, is the 7th day of the local KSL weather forecast more or less accurate than the 7th day of the forecast provided by the U. S. National Weather Service?*
+**1) In Salt Lake City, is the seventh day of the local KSL weather forecast more or less accurate than the seventh day of the forecast provided by the U. S. National Weather Service?**
 
+##Methodology
+To answer Question 1, Salt Lake City data from the KSL weather forecast of high and low temperatures between the days of March 12, 2022 and April 9, 2022 will be compared to the actual Tmax and Tmin collected by the KSLC weather station at Salt Lake International Airport during the same date range. We will construct a hypothesis test with an alpha value of 0.05. The hypothesis will be tested through a Two Sample t-test since the population standard deviation of the continuous forecast for the given months is unknown. To provide more information on the accuracy of both forecasts, we will also construct 95% confidence intervals for the mean error of each forecast's seventh day prediction. Since the forecast data was collected twice a day, we will only consider the prediction from the morning of the seventh day. This will provide us with almost a full week of advance. The following is the numerical representation of the null hypothesis:
+
+$H_0: \bar{x}_{KSLerr} - \bar{x}_{WCHNerr} >= 0$
+$H_a: \bar{x}_{KSLerr} - \bar{x}_{WCHNerr} < 0$
+
+The null hypothesis states that KSL has an equivalent or higher mean seventh day forecast error than The Weather Channel. We would reject the null hypothesis if there is significant evidence that KSL has a lower mean error than The Weather Channel. 
+
+##Data Analysis
 Since the data was collected twice a day over a series of days, there are a total of 14 predictions from KSL and 20 from Weather Channel. The data appears as follows:
-```{r}
+```{r, echo=F}
 head(KSL_Forecast)
 ```
 
-The data is formatted to show the date on the left and the forecast high vs low. The number of the column indicates how many measurements from the actual day that measurement was collected. For example, X13 means the measurement was taken on the evening of the 7th day before the day on the column. For the purpose of analyzing the second day, X14 will provide the morning of the 7th day of advance. The next step will provide four 95% confidence intervals for the mean difference between 7th day predictions and actual temperature. The intervals will measure this difference for each the high and the low temperature for each weather forecast source. The forecast error will be measured as $T_{actual} - T_{predicted} = T_{error}$. 
+The data is formatted to show the date on the left and the forecast high vs low. The number of the column indicates how many measurements from the actual day that measurement was collected. For example, X13 means the measurement was taken on the evening of the seventh day before the day on the column. For the purpose of analyzing the second day, X14 will provide the morning of the 7th day of advance. The next step will provide four 95% confidence intervals for the mean difference between seventh day predictions and actual temperature. The intervals will measure this difference for both the high and the low temperature for each weather forecast source. The forecast error will be measured as $T_{actual} - T_{predicted} = T_{error}$. 
 
-```{r, echo=T}
+```{r, echo=F}
 KSL_hi_forecast <- KSL_Forecast$X14[c(seq(1,57,2))]
 KSL_hi_forecast_diff <- SLC_Actual$TMAX - KSL_hi_forecast
+
 KSL_lo_forecast <- KSL_Forecast$X14[c(seq(2,58,2))]
 KSL_lo_forecast_diff <- SLC_Actual$TMIN - KSL_lo_forecast
+
 SLC_hi_forecast <- SLC_Forecast$X14[c(seq(1,57,2))]
 SLC_hi_forecast_diff <- SLC_Actual$TMAX - SLC_hi_forecast
+
 SLC_lo_forecast <- SLC_Forecast$X14[c(seq(2,58,2))]
 SLC_lo_forecast_diff <- SLC_Actual$TMIN - SLC_lo_forecast
 ```
 
-The difference datasets are prepared to yield confidence intervals through One Sample t-tests. First, the dataset for KSL difference in highs will be examined:
-```{r}
+First, the complete difference data for both services can be tested against the null hypothesis using a Welch Two Sample t-test.
+```{r, echo=F}
+t.test(c(KSL_lo_forecast_diff, KSL_hi_forecast_diff), c(SLC_lo_forecast_diff, SLC_hi_forecast_diff), alpha=0.05, alternative = "less")
+```
+In order to reject the null hypothesis, the value of p would have to be less than 0.05. Since $p = 0.6548$, we do not have evidence to reject the null hypothesis. It is likely to obtain a sample like the one we did given the assumption that The Weather Channel predicts the seventh day of the forecast at least as well as KSL.
+
+For further analysis, each of the four data sets representing highs and lows for KSL and The Weather Channel can be analyzed using 95% confidence intervals to determine the approximate error of the seventh day of the forecast for each service. First, the data set for KSL difference in highs will be examined:
+```{r, echo=F}
 t.test(KSL_hi_forecast_diff, conf.level = 0.95)
 ```
 This test indicates that we are 95% confident that, on average, the true max temperature of any given day in Salt Lake City from mid-March to mid-April is -0.05 to 3.84 degrees hotter than KSL predicted a week earlier. This provides evidence that KSL's forecast *underpredicts* the high temperature over the date range.
 
 Next, examine the data for KSL's forecast lows.
-```{r}
+```{r, echo=F}
 t.test(KSL_lo_forecast_diff, conf.level = 0.95)
 ```
-This test indicates that we are 95% confident that, on average, the true low temperature of any given day in Salt Lake City from mid-March to mid-April is -1.44 to 2.89 degrees hotter than KSL predicted a week earlier. This provides evidence that KSL's forecast *underpredicts* the low temperature over the date range, but this interval is centered closer to zero than the highs, so there is evidence that the predictions are not as inacurate as they were with the highs.
+This test indicates that we are 95% confident that, on average, the true low temperature of any given day in Salt Lake City from mid-March to mid-April is -1.44 to 2.89 degrees hotter than KSL predicted a week earlier. This provides evidence that KSL's forecast *underpredicts* the low temperature over the date range, but this interval is centered closer to zero than the highs, so there is evidence that the predictions are not as inaccurate as they were with the highs.
 
 Then examine the data for The Weather Channel's forecast highs.
-```{r}
+```{r, echo=F}
 t.test(SLC_hi_forecast_diff, conf.level = 0.95)
 ```
 This test indicates that we are 95% confident that, on average, the true max temperature of any given day in Salt Lake City from mid-March to mid-April is 0.01 to 4.06 degrees hotter than The Weather Channel predicted a week earlier. This provides evidence that The Weather Channel's forecast *underpredicts* the high temperature over the date range. Because a difference of 0 is not included in the interval, we have fairly strong evidence that the forecast consistently underpredics the true high temperature.
 
 Finally, examine the data for The Weather Channel's forecast lows.
-```{r}
+```{r, echo=F}
 t.test(SLC_lo_forecast_diff, conf.level = 0.95)
 ```
+This test indicates that we are 95% confident that, on average, the true low temperature of any given day in Salt Lake City from mid-March to mid-April is -2.16 to 1.74 degrees hotter than The Weather Channel predicted a week earlier. This provides weak evidence that The Weather Channel overpredicts the the low temperature over the date range. Because the interval is nearly centered around zero, this evidence is extremely weak.
+
+With each of these tests conducted, we can see that the difference between actual and forecast temperature is most extreme for The Weather Channel predicting the high temperatures, where the interval is centered around 2.03 degrees overprediction. KSL overpredicted high temperatures by an approximate margin of 1.89 degrees. For the low, the interval for KSL is centered at 0.72 degrees and the interval for The Weather Channel is centered at -0.21 degrees. Overall the real feeling of 2 degrees temperature difference in the ambient air is subjective, and may prove insignificant. With the caveats of inaccuracy in the weather forecast, these values seem to be fairly accurate even at their worst.
+
+The confidence of these conclusions is dampened by a few factors from our data collection. First, neither our forecast samples nor our actual temperature samples are random samples. This may be acceptable for the forecast on the basis that forecasts are updated systematically. However, regarding the actual temperature high and low, the SLC Int'l weather station samples temperature on a fixed interval, so it may not capture the true temperature high or low for any given day. Determining the likelihood of this error is beyond the scope of this study.
 
 ###*2) Of the cities Salt Lake City, UT; Austin, TX; San Francisco, CA; New York, NY; and Chicago, IL; which city's 10th forecast day is, on average, closest to the actual temperature that day?*
 
