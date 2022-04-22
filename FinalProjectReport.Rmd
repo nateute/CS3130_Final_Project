@@ -169,6 +169,7 @@ San Francisco had a couple of considerable spikes in temperature highs, but surp
 
 ```{r, echo = FALSE}
 t.test(SF_Actual$TMAX, SF_forecastMean, conf.level = .95)
+plot(t.test(SF_Actual$TMAX, SF_forecastMean, conf.level = .95))
 ```
 
 On average and with the same confidence level as before, the 10th day forecast deviated from the actual temperature by -1.54 degrees to 4.609 degrees, giving a vastly more accurate prediction than Salt Lake City. 
@@ -226,6 +227,7 @@ As seen clearly in the graph, the ten-day temperature predictions were quite acc
 
 ```{r, echo = FALSE}
 t.test(ATX_Actual$TMAX, ATX_forecastMean, conf.level = .95)
+plot(t.test(ATX_Actual$TMAX, ATX_forecastMean, conf.level = .95))
 ```
 
 This reports concludes with a 95% accuracy that, on average, the 10th day forecast deviated from the actual temperature by -3.9451 degrees to 2.7382 degrees, which is just a bit more accurate than San Francisco. As such, Austin is the most accurate city of the selected cities that were recorded. However, variability can have noticeable impacts on the reliability of weather forecasts, as seen with the obvious example of Chicago.
