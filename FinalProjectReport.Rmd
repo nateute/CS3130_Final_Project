@@ -6,6 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
+require(webr)
 knitr::opts_chunk$set(echo = TRUE)
 #Forecasts
 SLC_Forecast <- read.csv("forecast_data/SLC_forecast.csv")
@@ -231,10 +232,16 @@ This reports concludes with a 95% accuracy that, on average, the 10th day foreca
 
 ### *3) Does the city with the "most accurate" forecast according to question 2 also have the least variability in temperature over the given time period?*
 
-Intro
+F-distribution is a continuous statistical distribution which arises in the testing of whether two observed samples have the same variance. It is often desirable to compare two variances rather than two averages. The analysis of variance or "ANOVA" will help us to test hypothesis with certain levels of confidence that given two samples of data, their own populations may have equal variance (For more information, please see Chapter 13 of the book: "Introductory Statistics". For the following hypothesis testing, we will compare the two variance samples as equal by  choosing the initial hypothesis $H_0$ as a proportion of variances with a of 1. As well as a null hypothesis $H_a$ is the proportion does not equal 1:
 
-**ATX** 
+$H_0: \sigma_1^2 / \sigma_2^2 = 1$
 
+$H_a: \sigma_1^2 / \sigma_2^2 \neq 1$
+
+
+**Austin, TX** 
+
+F-test for the city Austin, TX. For both maximum and minimum temperature values:
 
 ```{r, echo = FALSE}
 # Averages of the 10th Forecast for MAX and MIN
@@ -244,14 +251,26 @@ ATX_lo_forecastMean <- (ATX_Forecast$X20[c(seq(2,41,2))]+ATX_Forecast$X19[c(seq(
 # ATX Test for variance
 var.test(ATX_Actual$TMAX[c(seq(1,20,1))],ATX_hi_forecastMean)
 var.test(ATX_Actual$TMIN[c(seq(1,20,1))],ATX_lo_forecastMean)
-plot(c(seq(1,20,1)), ATX_Actual$TMAX[c(seq(1,20,1))], type = "l", col = "red", ylim = c(20,95))
+plot(var.test(ATX_Actual$TMAX[c(seq(1,20,1))],ATX_hi_forecastMean))
+```
+
+Since the F-statistic is 2.728$\sigma^2$ and lies outside of our 95% confidence interval (1.079$\sigma^2$ to 6.893$\sigma^2$), we can conclude that the variance between the actual temperature data and the 10th day forecast is not equal. The ratio of variances in the case of the maximum temperature is 2.728$\sigma^2$ and 8.057$\sigma^2$ for the lower temperature, this means that the **actual** temperature data has higher variance than the forecast data.
+
+```{r, echo = FALSE}
+# ATX Comparison Graph
+plot(c(seq(1,20,1)), ATX_Actual$TMAX[c(seq(1,20,1))], type = "l", col = "red", ylim = c(20,95), xlab = "Days", ylab = "Temperature (C)")
 lines(c(seq(1,20,1)), ATX_hi_forecastMean, type = "c", col = "red")
 lines(c(seq(1,20,1)), ATX_Actual$TMIN[c(seq(1,20,1))], type = "l", col = "blue")
 lines(c(seq(1,20,1)), ATX_lo_forecastMean, type = "c", col = "blue")
 legend(15,40, legend=c('Forecast MAX', 'Recorded MAX','Forecast MIN', 'Recorded MIN'),col=c('red', 'red','blue', 'blue'), lty = c(2,1,2,1), cex = 0.8)
 ```
 
-**SLC** 
+Comparing the real temperature data with the 10th day forecast for the minimum and maximum registered values of each day, there is a high variance between the forecast and the real data.
+
+**Salt Lake City, UT** 
+
+F-test for the city Salt Lake City, UT. For both maximum and minimum temperature values:
+
 ```{r, echo = FALSE}
 # Averages of the 10th Forecast for MAX and MIN
 # SLC
@@ -260,14 +279,25 @@ SLC_lo_forecastMean <- (SLC_Forecast$X20[c(seq(2,41,2))]+SLC_Forecast$X19[c(seq(
 # SLC Test for variance
 var.test(SLC_Actual$TMAX[c(seq(1,20,1))],SLC_hi_forecastMean)
 var.test(SLC_Actual$TMIN[c(seq(1,20,1))],SLC_lo_forecastMean)
-plot(c(seq(1,20,1)), SLC_Actual$TMAX[c(seq(1,20,1))], type = "l", col = "red", ylim = c(20,95))
+plot(var.test(SLC_Actual$TMAX[c(seq(1,20,1))],SLC_hi_forecastMean))
+```
+
+For Salt Lake, the F-statistic is 2.408$\sigma^2$ and lies within of our 95% confidence interval (0.953$\sigma^2$ to 6.084$\sigma^2$), we can conclude that the variance between the actual temperature data and the 10th day forecast is similar. The ratio of variances in the case of the maximum temperature is 2.408$\sigma^2$ and 4.020$\sigma^2$ for the lower temperature, this means that the **actual** temperature data has higher variance than the forecast data.
+
+```{r, echo = FALSE}
+plot(c(seq(1,20,1)), SLC_Actual$TMAX[c(seq(1,20,1))], type = "l", col = "red", ylim = c(20,95), xlab = "Days", ylab = "Temperature (C)")
 lines(c(seq(1,20,1)), SLC_hi_forecastMean, type = "c", col = "red")
 lines(c(seq(1,20,1)), SLC_Actual$TMIN[c(seq(1,20,1))], type = "l", col = "blue")
 lines(c(seq(1,20,1)), SLC_lo_forecastMean, type = "c", col = "blue")
 legend(15,40, legend=c('Forecast MAX', 'Recorded MAX','Forecast MIN', 'Recorded MIN'),col=c('red', 'red','blue', 'blue'), lty = c(2,1,2,1), cex = 0.8)
 ```
 
-**CHI**
+Comparing the real temperature data with the 10th day forecast for the minimum and maximum registered values of each day, there is a similar variance behavior between the forecast and the real data.
+
+**Chicago, IL**
+
+F-test for the city Chicago, IL. For both maximum and minimum temperature values:
+
 ```{r, echo = FALSE}
 # Averages of the 10th Forecast for MAX and MIN
 # CHI
@@ -276,15 +306,26 @@ CHI_lo_forecastMean <- (CHI_Forecast$X20[c(seq(2,41,2))]+CHI_Forecast$X19[c(seq(
 # CHI Test for variance
 var.test(CH_Actual$TMAX[c(seq(1,20,1))],CHI_hi_forecastMean)
 var.test(CH_Actual$TMIN[c(seq(1,20,1))],CHI_lo_forecastMean)
-plot(c(seq(1,20,1)), CH_Actual$TMAX[c(seq(1,20,1))], type = "l", col = "red", ylim = c(20,95))
+plot(var.test(CH_Actual$TMAX[c(seq(1,20,1))],CHI_hi_forecastMean))
+```
+
+In the city of Chicago, the F-statistic is 4.745$\sigma^2$ and lies way outside of our 95% confidence interval (1.878$\sigma^2$ to 11.989$\sigma^2$), we can conclude that the variance between the actual temperature data and the 10th day forecast is very different. The ratio of variances in the case of the maximum temperature is 4.7453$\sigma^2$ and 2.803$\sigma^2$ for the lower temperature, this means that the **actual** temperature data has higher variance than the forecast data.
+
+
+```{r, echo = FALSE}
+plot(c(seq(1,20,1)), CH_Actual$TMAX[c(seq(1,20,1))], type = "l", col = "red", ylim = c(20,95), xlab = "Days", ylab = "Temperature (C)")
 lines(c(seq(1,20,1)), CHI_hi_forecastMean, type = "c", col = "red")
 lines(c(seq(1,20,1)), CH_Actual$TMIN[c(seq(1,20,1))], type = "l", col = "blue")
 lines(c(seq(1,20,1)), CHI_lo_forecastMean, type = "c", col = "blue")
 legend(15,90, legend=c('Forecast MAX', 'Recorded MAX','Forecast MIN', 'Recorded MIN'),col=c('red', 'red','blue', 'blue'), lty = c(2,1,2,1), cex = 0.8)
 ```
 
+Comparing the real temperature data with the 10th day forecast for the minimum and maximum registered values of each day, there is a very high variance behavior between the forecast and the real data.
 
-**NY**
+**New York, NY**
+
+F-test for the city New York, NY. For both maximum and minimum temperature values:
+
 ```{r, echo = FALSE}
 # Averages of the 10th Forecast for MAX and MIN
 # NY
@@ -293,13 +334,30 @@ NY_lo_forecastMean <- (NY_Forecast$X20[c(seq(2,41,2))]+NY_Forecast$X19[c(seq(2,4
 # NY Test for variance
 var.test(NY_Actual$TMAX[c(seq(1,20,1))],NY_hi_forecastMean)
 var.test(NY_Actual$TMIN[c(seq(1,20,1))],NY_lo_forecastMean)
-plot(c(seq(1,20,1)), NY_Actual$TMAX[c(seq(1,20,1))], type = "l", col = "red", ylim = c(20,95))
+plot(var.test(NY_Actual$TMAX[c(seq(1,20,1))],NY_hi_forecastMean))
+```
+
+For New York, the F-statistic is 2.272$\sigma^2$ and lies within of our 95% confidence interval (0.899$\sigma^2$ to 5.740$\sigma^2$), we can conclude that the variance between the actual temperature data and the 10th day forecast is similar. The ratio of variances in the case of the maximum temperature is 2.272$\sigma^2$ and 2.426$\sigma^2$ for the lower temperature, this means that the **actual** temperature data has higher variance than the forecast data.
+
+```{r, echo = FALSE}
+plot(c(seq(1,20,1)), NY_Actual$TMAX[c(seq(1,20,1))], type = "l", col = "red", ylim = c(20,95), xlab = "Days", ylab = "Temperature (C)")
 lines(c(seq(1,20,1)), NY_hi_forecastMean, type = "c", col = "red")
 lines(c(seq(1,20,1)), NY_Actual$TMIN[c(seq(1,20,1))], type = "l", col = "blue")
 lines(c(seq(1,20,1)), NY_lo_forecastMean, type = "c", col = "blue")
 legend(15,90, legend=c('Forecast MAX', 'Recorded MAX','Forecast MIN', 'Recorded MIN'),col=c('red', 'red','blue', 'blue'), lty = c(2,1,2,1), cex = 0.8)
 ```
 
+Comparing the real temperature data with the 10th day forecast for the minimum and maximum registered values of each day, there is a very high variance behavior between the forecast and the real data.
+
 ## Conclusion
 
 Summarize thoughts from analysis, as well as the data collection process, to answer the questions of the topic.
+
+
+**Conclusion for Q3  (Important Points)**
+
+  + The F-test was made between the actual data vs. the 10th Day Forecast data.
+  + The city with the highest variance is Chicago.
+  + The city with less variance is both SLC and NY, being NY the one with less variance. (See p-values)
+  + All 10-day forecast has a "conservative" variance, which means that all the cities have a highly variance on its actual data compared to the forecast data.
+  + All graphs (forecast vs. Temp for MAX and MIN) corroborates the F-test made for each city.
