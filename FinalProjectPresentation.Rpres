@@ -1,26 +1,89 @@
-Final Project Presentation
-========================================================
-author: 
-date: 
-autosize: true
+```{r setup, include=FALSE}
+require(webr)
+knitr::opts_chunk$set(echo = TRUE)
+#Forecasts
+SLC_Forecast <- read.csv("forecast_data/SLC_forecast.csv")
+KSL_Forecast <- read.csv("forecast_data/KSL_forecast.csv")
+NY_Forecast <- read.csv("forecast_data/NY_forecast.csv")
+CHI_Forecast <- read.csv("forecast_data/CHI_forecast.csv")
+ATX_Forecast <- read.csv("forecast_data/ATX_forecast.csv")
+SF_Forecast <- read.csv("forecast_data/SF_forecast.csv")
+#Actual temperatures
+SLC_Actual <- read.csv("actualTemp_data/SLC_ActualTemp.csv")
+NY_Actual <- read.csv("actualTemp_data/NY_ActualTemp.csv")
+CH_Actual <- read.csv("actualTemp_data/CH_ActualTemp.csv")
+ATX_Actual <- read.csv("actualTemp_data/ATX_ActualTemp.csv")
+SF_Actual <- read.csv("actualTemp_data/SF_ActualTemp.csv")
+```
 
-First Slide
+Can We Trust the 10th Day of the 10-Day Forecast?
 ========================================================
+author:  Alex Baburnic, Nate Hansen, & David Vanegas
+date: 4/22/2022
+autosize: true
 
 For more details on authoring R presentations please visit <https://support.rstudio.com/hc/en-us/articles/200486468>.
 
-- Bullet 1
-- Bullet 2
-- Bullet 3
-
-Slide With Code
+The Questions
 ========================================================
+autosize: true
 
-```{r}
-summary(cars)
+1. In Salt Lake City, is the 7th day of the local KSL weather forecast more or less accurate than the 7th day of the forecast provided by the U. S. National Weather Service?
+
+2. Of the cities Salt Lake City, UT; Austin, TX; San Francisco, CA; New York, NY; and Chicago, IL; which city's 10th forecast day is, on average, closest to the actual temperature that day?
+
+3. Does the city with the "most accurate" forecast according to question 2 also have the least variability in temperature over the month of March?
+
+Forecast Data
+========================================================
+autosize: true
+
+We collected 10 days of forecast data twice a day from the following cities:
+
+- Salt Lake City, UT (KSL and The Weather Channel)
+- Austin, TX
+- San Francisco, CA
+- New York, NY
+- Chicago, IL
+
+These cities were chosen because they are large metropolitan areas, and because they have relatively different climates. We figured that the national algorithm would probably provide its most accurate service to large cities, and it would be another question entirely to consider small towns.
+
+Data was collected at 7:00am and 5:00pm Mountain Time. We understand that this is systematic and not random, but since forecasts are only updated periodically, we have captured the updates.
+
+Question 1: In Salt Lake City, is the seventh day of the local KSL weather forecast more or less accurate than the seventh day of the forecast provided by The Weather Channel?
+========================================================
+autosize: true
+
+The null hypothesis is given as follows:
+
+$H_0:\bar{x}_{KSLerr}-\bar{x}_{WCHNerr} >= 0$
+
+$H_a:\bar{x}_{KSLerr} - \bar{x}_{WCHNerr} < 0$
+
+```{r, echo=F}
+KSL_hi_forecast <- KSL_Forecast$X14[c(seq(1,57,2))]
+KSL_hi_forecast_diff <- SLC_Actual$TMAX - KSL_hi_forecast
+KSL_lo_forecast <- KSL_Forecast$X14[c(seq(2,58,2))]
+KSL_lo_forecast_diff <- SLC_Actual$TMIN - KSL_lo_forecast
+SLC_hi_forecast <- SLC_Forecast$X14[c(seq(1,57,2))]
+SLC_hi_forecast_diff <- SLC_Actual$TMAX - SLC_hi_forecast
+SLC_lo_forecast <- SLC_Forecast$X14[c(seq(2,58,2))]
+SLC_lo_forecast_diff <- SLC_Actual$TMIN - SLC_lo_forecast
 ```
 
-Slide With Plot
+First, the complete difference data for both services can be tested against the null hypothesis using a Welch Two Sample t-test.
+```{r, echo=F}
+t.test(c(KSL_lo_forecast_diff, KSL_hi_forecast_diff), c(SLC_lo_forecast_diff, SLC_hi_forecast_diff), alpha=0.05, alternative = "less")
+```
+
+Question 1 (Cont'd)
+========================================================
+
+```{r, echo=F}
+plot(t.test(c(KSL_lo_forecast_diff, KSL_hi_forecast_diff), c(SLC_lo_forecast_diff, SLC_hi_forecast_diff), alpha=0.05, alternative = "less"))
+```
+
+Question 2
 ========================================================
 
 ```{r, echo=FALSE}

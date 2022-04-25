@@ -28,82 +28,69 @@ SF_Actual <- read.csv("actualTemp_data/SF_ActualTemp.csv")
 Anyone who has sat through a rainy picnic knows by hard experience that the reliability of the weather forecast has measurable impact on one's life. In the modern age of technology and the "Internet of Things", humans have devised algorithms to provide themselves peace-of-mind and certainty. Yet, as they eat their soggy sandwiches under a nearby pergola, people wonder why the weather forecast said it would be clear when they planned the picnic a week ago. Is it common for the forecast to be so inconsistent, or did they just get anomalously unlucky? Does the local weather station or the national one provide more accurate forecast data? Sometimes the forecast calls for relatively warm days within a week, and when the days approach, the forecast has gotten much cooler or warmer. In the Salt Lake Valley, the temperature often changes sporadically near the spring equinox, referred to by the locals as "Utah weather". Is this oscillation really unique to Utah at this time of year? Are there other cities in the United States that seem to have more reliable forecasts? The authors will attempt to answer some of these questions with confidence using statistical analysis of weather data gathered from local and national forecasts.
 
 #### Importance of Studying Weather Station Reliability
+
 Reliable weather forecasts would bring greater certainty to the conditions from events as small as the family picnic to as large as community firework shows or rocket launches. Although gathering data about the reliability of the forecast will not inherently improve its reliability, this information can help people make decisions about where to live. Knowing the comparative reliability of the forecast for various cities can help organizations plan large national events and assess the risk of unpredictability. Data comparing local forecasts to national forecasts will help people determine which forecast to trust more when they seem to be disparate. In a broader sense, some believe that modern extreme weather patterns are a direct result of climate change, and therefore climate change damages weather predictability. Based on these topics of value, the following questions can be operationalized:
 
-1) In Salt Lake City, is the 7th day of the local KSL weather forecast more or less accurate than the 7th day of the forecast provided by the U. S. National Weather Service?
+1) In Salt Lake City, is the 7th day of the local KSL weather forecast more accurate than the 7th day of the forecast provided by The Weather Channel?
 
 2) Of the cities Salt Lake City, UT; Austin, TX; San Francisco, CA; New York, NY; and Chicago, IL; which city's 10th forecast day is, on average, closest to the actual temperature that day?
 
 3) Does the city with the "most accurate" forecast according to question 2 also have the least variability in temperature over the month of March?
 
-***4) Do the cities with the "less accurate" forecast according to question 2 also exhibit the greatest change in average temperature or temperature variance since 80 years ago?***
-
-*the above header line can be deleted to make this all one part of the intro.*
-*List out the main topics and sections of the report to the reader, then transition to the next section. Remember, the professor wants these reports to "flow" together like a story.*
 
 #### Methodology
 
-To gather data that answers our question, we will use a variety of sources. Data for national forecasts will be gathered from The Weather Channel. Local Salt Lake City forecasts will be gathered from KSL Weather. Historical true high and low temperatures will be gathered from NOAA, where the stations gathering measurements will be located at the metropolis centers where the forecast is being calculated. Historic data will be gathered at only one station in each city.
+To gather data that answers our question, we will use a variety of sources. Data for national forecasts will be gathered from The Weather Channel. Local Salt Lake City forecasts will be gathered from KSL Weather. Historical true high and low temperatures will be gathered from NOAA, where the stations gathering measurements will be located at the metropolis centers where the forecast is being calculated.
 
-The forecast sources do not seem to disclose how often they update their forecasts, so we had to devise a good way to collect a large sample of forecast predictions for each day. We considered collecting a random sample, but it is a little unrealistic to manually record the forecast at random times during the day.
+The forecast sources do not seem to disclose how often they update their forecasts. We considered collecting a random sample, but it is a little unrealistic to manually record the forecast at random times during the day. Hence, forecast data will be collected for all cities at 7am and 5pm Mountain Time from March 3, 2022 through April 9, 2022. This will provide ten days of forecast data for each day between March 12 and April 9. We will compare the 10th day of those forecasts to the actual high and low of the day as recorded by NOAA. Since NOAA data is also collected systematically and not randomly, any conclusions will be made with diminished confidence. 
 
-
-
-## Data Collection
-
-Display here the results of the gathered data.
-
-Limitations:
-- Forecast data was collected systematically, sampled infrequently
-- Forecast sample size is relatively large, but not enough to overcome skewness
-- We don't know which stations weather.com uses
-- 
-
-NOAA:
-- Actual Temps 3/2/2022-4/7/2022 for SLC, Austin, TX; SF, CA; CHI, IL; NY, NY;
-***-Historical data from same cities during same time***
+To analyze the data to answer the questions, we have determined that we will conduct hypothesis tests and confidence intervals with 95% confidence. This seems reasonable given the low-stakes nature of this study. Nothing critical rides on its precision, but we want the conclusions to have good confidence. Since none of the samples were collected randomly given the systematic nature of weather data collection, these confidence levels will be further diminished.
 
 #### Data Observations
-This is an optional subsection, but it may make the document flow better. Here make some very general observations regarding the data, such as very obvious trends or outliers that may or may not be taken into consideration (and explain why).
+
+As we were collecting the data, we noticed a few noteworthy trends. Specifically, we wish to address that the temperature in all cities experienced an upward trend because the measurements were taken around the Spring Equinox. Measurements in temperature variability will be high because they will reflect this upward trend. This can be seen most dramatically in the weather data collected between March 12 and March 17 in Chicago, Illinois. We believe that any affects of this trend are already properly accounted for within our analysis methods.
+
+```{r}
+head(CH_Actual)
+```
 
 ## Data Analysis
 
-Make meaningful analysis of the data with respect to the question of the topic. Unlike the previous subsection, go much more into detail here. Explain what certain data trends and values relate to the question and possibly make inferences that could be understood outside of statistics (you can think of the starting paragraph discussion on the Assignment 3 Canvas page).
+### *1) In Salt Lake City, is the seventh day of the local KSL weather forecast more or less accurate than the seventh day of the forecast provided by The Weather Channel?*
 
-### *1) In Salt Lake City, is the seventh day of the local KSL weather forecast more or less accurate than the seventh day of the forecast provided by the U. S. National Weather Service?**
-
-##Methodology
 To answer Question 1, Salt Lake City data from the KSL weather forecast of high and low temperatures between the days of March 12, 2022 and April 9, 2022 will be compared to the actual Tmax and Tmin collected by the KSLC weather station at Salt Lake International Airport during the same date range. We will construct a hypothesis test with an alpha value of 0.05. The hypothesis will be tested through a Two Sample t-test since the population standard deviation of the continuous forecast for the given months is unknown. To provide more information on the accuracy of both forecasts, we will also construct 95% confidence intervals for the mean error of each forecast's seventh day prediction. Since the forecast data was collected twice a day, we will only consider the prediction from the morning of the seventh day. This will provide us with almost a full week of advance. The following is the numerical representation of the null hypothesis:
 
 $H_0: \bar{x}_{KSLerr} - \bar{x}_{WCHNerr} >= 0$
+
 $H_a: \bar{x}_{KSLerr} - \bar{x}_{WCHNerr} < 0$
 
-The null hypothesis states that KSL has an equivalent or higher mean seventh day forecast error than The Weather Channel. We would reject the null hypothesis if there is significant evidence that KSL has a lower mean error than The Weather Channel. 
+The forecast error will be measured as $T_{predicted} - T_{actual} = T_{error}$.The null hypothesis states that KSL has an equivalent or higher mean seventh day forecast error than The Weather Channel. We would reject the null hypothesis if there is significant evidence that KSL has a lower mean error than The Weather Channel. 
 
-##Data Analysis
-Since the data was collected twice a day over a series of days, there are a total of 14 predictions from KSL and 20 from Weather Channel. The data appears as follows:
+Since the data were collected twice a day over a series of days, there are a total of 14 predictions from KSL and 20 from Weather Channel. The data appear as follows:
 ```{r, echo=F}
 head(KSL_Forecast)
 ```
 
-The data is formatted to show the date on the left and the forecast high vs low. The number of the column indicates how many measurements from the actual day that measurement was collected. For example, X13 means the measurement was taken on the evening of the seventh day before the day on the column. For the purpose of analyzing the second day, X14 will provide the morning of the 7th day of advance. The next step will provide four 95% confidence intervals for the mean difference between seventh day predictions and actual temperature. The intervals will measure this difference for both the high and the low temperature for each weather forecast source. The forecast error will be measured as $T_{actual} - T_{predicted} = T_{error}$. 
+The data are formatted to show the date on the left and the forecast high vs low. The number of the column indicates how many measurements from the actual day that measurement was collected. For example, X13 means the measurement was taken on the evening of the seventh day before the day on the column. For the purpose of analyzing the second day, X14 will provide the morning of the 7th day of advance. The next step will provide four 95% confidence intervals for the mean difference between seventh day predictions and actual temperature. The intervals will measure this difference for both the high and the low temperature for each weather forecast source. 
 
 ```{r, echo=F}
 KSL_hi_forecast <- KSL_Forecast$X14[c(seq(1,57,2))]
-KSL_hi_forecast_diff <- SLC_Actual$TMAX - KSL_hi_forecast
+KSL_hi_forecast_diff <- KSL_hi_forecast - SLC_Actual$TMAX
 KSL_lo_forecast <- KSL_Forecast$X14[c(seq(2,58,2))]
-KSL_lo_forecast_diff <- SLC_Actual$TMIN - KSL_lo_forecast
+KSL_lo_forecast_diff <- KSL_lo_forecast - SLC_Actual$TMIN
 SLC_hi_forecast <- SLC_Forecast$X14[c(seq(1,57,2))]
-SLC_hi_forecast_diff <- SLC_Actual$TMAX - SLC_hi_forecast
+SLC_hi_forecast_diff <- SLC_hi_forecast - SLC_Actual$TMAX
 SLC_lo_forecast <- SLC_Forecast$X14[c(seq(2,58,2))]
-SLC_lo_forecast_diff <- SLC_Actual$TMIN - SLC_lo_forecast
+SLC_lo_forecast_diff <- SLC_lo_forecast - SLC_Actual$TMIN 
 ```
 
 First, the complete difference data for both services can be tested against the null hypothesis using a Welch Two Sample t-test.
 ```{r, echo=F}
-t.test(c(KSL_lo_forecast_diff, KSL_hi_forecast_diff), c(SLC_lo_forecast_diff, SLC_hi_forecast_diff), alpha=0.05, alternative = "less")
+t.test(c(abs(KSL_lo_forecast_diff), abs(KSL_hi_forecast_diff)), c(abs(SLC_lo_forecast_diff), abs(SLC_hi_forecast_diff)), alpha=0.05, alternative = "less")
+plot(t.test(c(abs(KSL_lo_forecast_diff), abs(KSL_hi_forecast_diff)), c(abs(SLC_lo_forecast_diff), abs(SLC_hi_forecast_diff)), alpha=0.05, alternative = "less"))
 ```
-In order to reject the null hypothesis, the value of p would have to be less than 0.05. Since $p = 0.6548$, we do not have evidence to reject the null hypothesis. It is likely to obtain a sample like the one we did given the assumption that The Weather Channel predicts the seventh day of the forecast at least as well as KSL.
+
+In order to reject the null hypothesis, the value of p would have to be less than 0.05. Since $p = 0.59894$, we do not have evidence to reject the null hypothesis. It is likely to obtain a sample like the one we did given the assumption that The Weather Channel predicts the seventh day of the forecast at least as well as KSL.
 
 For further analysis, each of the four data sets representing highs and lows for KSL and The Weather Channel can be analyzed using 95% confidence intervals to determine the approximate error of the seventh day of the forecast for each service. First, the data set for KSL difference in highs will be examined:
 ```{r, echo=F}
@@ -353,7 +340,7 @@ Comparing the real temperature data with the 10th day forecast for the minimum a
 
 ## Conclusion
 
-Summarize thoughts from analysis, as well as the data collection process, to answer the questions of the topic.
+In conclusion, this study was not able to determine any strong correlation between the variability of temperature and the accuracy of the forecast, nor can it conclude that local forecast providers are more accurate than The Weather Channel. All tests and confidence intervals for test statistics were performed with 95% confidence, which is dampened because the samples were collected systematically and not randomly. Future studies on the correlation between temperature variability and prediction accuracy could perhaps last for 12 months or longer to capture all of the seasonal nuances of each place. Studies comparing local forecasts to national forecasts could include information like hourly precipitation predictions, which is something this study does not address at all. Finally, weather forecast accuracy could be compared between climates in a more measurable way to determine what specific factors impact weather prediction accuracy. The most useful conclusion of our study is that, for everyday casual purposes, both local and national forecast services give an approximately equally accurate view of the upcoming temperature.
 
 
 **Conclusion for Q3  (Important Points)**
