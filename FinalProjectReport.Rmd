@@ -243,7 +243,7 @@ var.test(ATX_Actual$TMIN[c(seq(1,20,1))],ATX_lo_forecastMean)
 plot(var.test(ATX_Actual$TMAX[c(seq(1,20,1))],ATX_hi_forecastMean))
 ```
 
-Since the F-statistic is 2.728$\sigma^2$ and lies outside of our 95% confidence interval (1.079$\sigma^2$ to 6.893$\sigma^2$), we can conclude that the variance between the actual temperature data and the 10th day forecast is not equal. The ratio of variances in the case of the maximum temperature is 2.728$\sigma^2$ and 8.057$\sigma^2$ for the lower temperature, this means that the **actual** temperature data has higher variance than the forecast data.
+Since the F-statistic is 2.728$\sigma^2$ and lies outside of our 95% confidence interval (1.079$\sigma^2$ to 6.893$\sigma^2$), we can conclude that the variance between the actual temperature data and the 10th day forecast is not equal. The ratio of variances in the case of the maximum temperature is 2.728 and 8.057 for the minimum temperature, this means that the **actual** temperature data has higher variance than the forecast data.
 
 ```{r, echo = FALSE}
 # ATX Comparison Graph
@@ -271,7 +271,7 @@ var.test(SLC_Actual$TMIN[c(seq(1,20,1))],SLC_lo_forecastMean)
 plot(var.test(SLC_Actual$TMAX[c(seq(1,20,1))],SLC_hi_forecastMean))
 ```
 
-For Salt Lake, the F-statistic is 2.408$\sigma^2$ and lies within of our 95% confidence interval (0.953$\sigma^2$ to 6.084$\sigma^2$), we can conclude that the variance between the actual temperature data and the 10th day forecast is similar. The ratio of variances in the case of the maximum temperature is 2.408$\sigma^2$ and 4.020$\sigma^2$ for the lower temperature, this means that the **actual** temperature data has higher variance than the forecast data.
+For Salt Lake, the F-statistic is 2.408$\sigma^2$ and lies within of our 95% confidence interval (0.953$\sigma^2$ to 6.084$\sigma^2$), we can conclude that the variance between the actual temperature data and the 10th day forecast is similar. The ratio of variances in the case of the maximum temperature is 2.408 and 4.020 for the minimum temperature, this means that the **actual** temperature data has higher variance than the forecast data.
 
 ```{r, echo = FALSE}
 plot(c(seq(1,20,1)), SLC_Actual$TMAX[c(seq(1,20,1))], type = "l", col = "red", ylim = c(20,95), xlab = "Days", ylab = "Temperature (C)")
@@ -298,7 +298,7 @@ var.test(CH_Actual$TMIN[c(seq(1,20,1))],CHI_lo_forecastMean)
 plot(var.test(CH_Actual$TMAX[c(seq(1,20,1))],CHI_hi_forecastMean))
 ```
 
-In the city of Chicago, the F-statistic is 4.745$\sigma^2$ and lies way outside of our 95% confidence interval (1.878$\sigma^2$ to 11.989$\sigma^2$), we can conclude that the variance between the actual temperature data and the 10th day forecast is very different. The ratio of variances in the case of the maximum temperature is 4.7453$\sigma^2$ and 2.803$\sigma^2$ for the lower temperature, this means that the **actual** temperature data has higher variance than the forecast data.
+In the city of Chicago, the F-statistic is 4.745$\sigma^2$ and lies way outside of our 95% confidence interval (1.878$\sigma^2$ to 11.989$\sigma^2$), we can conclude that the variance between the actual temperature data and the 10th day forecast is very different. The ratio of variances in the case of the maximum temperature is 4.7453 and 2.803 for the minimum temperature, this means that the **actual** temperature data has higher variance than the forecast data.
 
 
 ```{r, echo = FALSE}
@@ -326,7 +326,7 @@ var.test(NY_Actual$TMIN[c(seq(1,20,1))],NY_lo_forecastMean)
 plot(var.test(NY_Actual$TMAX[c(seq(1,20,1))],NY_hi_forecastMean))
 ```
 
-For New York, the F-statistic is 2.272$\sigma^2$ and lies within of our 95% confidence interval (0.899$\sigma^2$ to 5.740$\sigma^2$), we can conclude that the variance between the actual temperature data and the 10th day forecast is similar. The ratio of variances in the case of the maximum temperature is 2.272$\sigma^2$ and 2.426$\sigma^2$ for the lower temperature, this means that the **actual** temperature data has higher variance than the forecast data.
+For New York, the F-statistic is 2.272$\sigma^2$ and lies within of our 95% confidence interval (0.899$\sigma^2$ to 5.740$\sigma^2$), we can conclude that the variance between the actual temperature data and the 10th day forecast is similar. The ratio of variances in the case of the maximum temperature is 2.272 and 2.426 for the minimum temperature, this means that the **actual** temperature data has higher variance than the forecast data.
 
 ```{r, echo = FALSE}
 plot(c(seq(1,20,1)), NY_Actual$TMAX[c(seq(1,20,1))], type = "l", col = "red", ylim = c(20,95), xlab = "Days", ylab = "Temperature (C)")
@@ -338,15 +338,10 @@ legend(15,90, legend=c('Forecast MAX', 'Recorded MAX','Forecast MIN', 'Recorded 
 
 Comparing the real temperature data with the 10th day forecast for the minimum and maximum registered values of each day, there is a very high variance behavior between the forecast and the real data.
 
+Going back to the original question, we have the following conclusions: 
+
+The cities with the highest ratio of variances is Chicago and Austin, and the cities with the lowest ratio of variances is Salt Lake City and New York. For all cities the 10th-day forecast showed a relative conservative variance compared to the actual temperature data. The F-test made for each city also corroborates the variability behavior of the 10th-day Forecast vs. Actual Temp. Data for both MAX and MIN variables.
+
 ## Conclusion
 
 In conclusion, this study was not able to determine any strong correlation between the variability of temperature and the accuracy of the forecast, nor can it conclude that local forecast providers are more accurate than The Weather Channel. All tests and confidence intervals for test statistics were performed with 95% confidence, which is dampened because the samples were collected systematically and not randomly. Future studies on the correlation between temperature variability and prediction accuracy could perhaps last for 12 months or longer to capture all of the seasonal nuances of each place. Studies comparing local forecasts to national forecasts could include information like hourly precipitation predictions, which is something this study does not address at all. Finally, weather forecast accuracy could be compared between climates in a more measurable way to determine what specific factors impact weather prediction accuracy. The most useful conclusion of our study is that, for everyday casual purposes, both local and national forecast services give an approximately equally accurate view of the upcoming temperature.
-
-
-**Conclusion for Q3  (Important Points)**
-
-  + The F-test was made between the actual data vs. the 10th Day Forecast data.
-  + The city with the highest variance is Chicago.
-  + The city with less variance is both SLC and NY, being NY the one with less variance. (See p-values)
-  + All 10-day forecast has a "conservative" variance, which means that all the cities have a highly variance on its actual data compared to the forecast data.
-  + All graphs (forecast vs. Temp for MAX and MIN) corroborates the F-test made for each city.
