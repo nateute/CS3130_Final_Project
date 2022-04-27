@@ -1,7 +1,7 @@
 ---
 title: "Can We Really Trust the 10-Day Forecast?"
 author: "Alex Baburnic, Nate Hansen, & David Vanegas"
-date: "4/21/2022"
+date: "4/27/2022"
 output: html_document
 ---
 
@@ -344,4 +344,4 @@ The cities with the highest ratio of variances is Chicago and Austin, and the ci
 
 ## Conclusion
 
-In conclusion, this study was not able to determine any strong correlation between the variability of temperature and the accuracy of the forecast, nor can it conclude that local forecast providers are more accurate than The Weather Channel. All tests and confidence intervals for test statistics were performed with 95% confidence, which is dampened because the samples were collected systematically and not randomly. Future studies on the correlation between temperature variability and prediction accuracy could perhaps last for 12 months or longer to capture all of the seasonal nuances of each place. Studies comparing local forecasts to national forecasts could include information like hourly precipitation predictions, which is something this study does not address at all. Finally, weather forecast accuracy could be compared between climates in a more measurable way to determine what specific factors impact weather prediction accuracy. The most useful conclusion of our study is that, for everyday casual purposes, both local and national forecast services give an approximately equally accurate view of the upcoming temperature.
+In conclusion, this study was not able to determine any strong correlation between the variability of temperature and the accuracy of the forecast, nor can it conclude that local forecast providers are more accurate than The Weather Channel. All tests and confidence intervals for test statistics were performed with 95% confidence, which is dampened because the samples were collected systematically and not randomly. Future studies on the correlation between temperature variability and prediction accuracy could perhaps last for 12 months or longer to capture all of the seasonal nuances of each place. Variance of temperature in our analysis is affected by the natural increase in spring, which is different from "variability" which would be the change from day to day. Studies comparing local forecasts to national forecasts could also include information like hourly precipitation predictions, which is something this study does not address at all. Finally, weather forecast accuracy could be compared between climates in a more measurable way to determine what specific factors impact weather prediction accuracy. The most useful conclusion of our study is that, for everyday casual purposes, both local and national forecast services give an approximately equally accurate view of the upcoming temperature.
